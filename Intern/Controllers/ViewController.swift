@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import TinyConstraints
 
 class ViewController: UIViewController {
     
@@ -19,6 +20,7 @@ class ViewController: UIViewController {
         return button
     }()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -28,12 +30,9 @@ class ViewController: UIViewController {
         
         // Устанавливаем ограничения
         myButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            myButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            myButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            myButton.widthAnchor.constraint(equalToConstant: 200),
-            myButton.heightAnchor.constraint(equalToConstant: 50)
-        ])
+        myButton.centerInSuperview()
+        myButton.width(20)
+        myButton.height(300)
     }
 }
 
