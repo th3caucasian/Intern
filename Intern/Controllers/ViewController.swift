@@ -17,8 +17,11 @@ class ViewController: UIViewController {
         let stack = CardStack(frame: UIScreen.main.bounds)
         
         // Добавляем кнопку на экран
-        view.addSubview(stack)
-        //myView.centerInSuperview(priority: .defaultHigh)
+        view.addSubview(card)
+        card.widthToSuperview(offset: -25)
+        card.heightToSuperview(multiplier: 0.25)
+        card.centerInSuperview()
+        card.setupView()
     }
 }
 
