@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUICore
+import TinyConstraints
 
 class CardStack: UIView {
     
@@ -15,7 +16,6 @@ class CardStack: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         initList()
-        setupView()
     }
     
     required init?(coder: NSCoder) {
@@ -25,17 +25,19 @@ class CardStack: UIView {
     private let cardStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.alignment = .center
         stack.distribution = .fillEqually
         return stack
     }()
     
-    private func setupView() {
-        cardList.forEach(cardStack.addArrangedSubview)
+    func setupView() {
         self.addSubview(cardStack)
-        cardStack.width(self.frame.width)
-        cardStack.height(self.frame.height - 150)
+        cardStack.edgesToSuperview()
         cardStack.centerInSuperview()
+        cardList.forEach {
+            cardStack.addArrangedSubview($0)
+            $0.setupView()
+
+        }
     }
     
     private func initList() {

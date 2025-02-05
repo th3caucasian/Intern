@@ -11,9 +11,6 @@ import TinyConstraints
 class Card: UIView {
     
     private var choice = false
-    private let viewWidth: CGFloat = 370
-    private let viewHeight: CGFloat = 230
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,20 +32,36 @@ class Card: UIView {
     private let choiceButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Выбрать", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         button.backgroundColor = UIColor(named: "LightBlue")
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 20
         button.clipsToBounds = true
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowRadius = 2
+        button.layer.shadowOpacity = 0.3
+        button.layer.masksToBounds = false
         return button
     }()
     
     // default background
-    private let defaultBackground: UIView = {
+    private let placeholder: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 0.178, green: 0.600, blue: 0.902, alpha: 0.2)
-        view.layer.cornerRadius = 20
         return view
+    }()
+    
+    
+    private let defaultImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "map_bckgrnd")
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 20
+        imageView.layer.shadowColor = UIColor.black.cgColor
+        imageView.layer.shadowRadius = 5
+        imageView.layer.shadowOpacity = 0.5
+        imageView.layer.masksToBounds = false
+        return imageView
     }()
     
     // stack
@@ -57,17 +70,35 @@ class Card: UIView {
         stack.axis = .vertical
         stack.alignment = .leading
         stack.distribution = .fill
-        stack.spacing = 5
+        stack.backgroundColor = .white
+        stack.layer.cornerRadius = 20
+        stack.layer.shadowColor = UIColor.black.cgColor
+        stack.layer.shadowRadius = 5
+        stack.layer.shadowOpacity = 0.5
+        stack.layer.masksToBounds = false
+        return stack
+    }()
+    
+    private let horizontalStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .leading
         return stack
     }()
     
     // text
-    var cardText: UILabel = {
+    let cardText: UILabel = {
         let label = UILabel()
         label.text = "Template"
+        label.font = UIFont.systemFont(ofSize: 17)
         return label
     }()
     
+    let sepLine: UIView = {
+        let line = UIView()
+        line.backgroundColor = .gray
+        return line
+    }()
     
     // map view
     
@@ -78,14 +109,23 @@ class Card: UIView {
 
     func setupView() {
         self.addSubview(verticalStack)
-        verticalStack.edgesToSuperview()
-        verticalStack.addArrangedSubview(cardText)
-        verticalStack.addArrangedSubview(defaultBackground)
-        defaultBackground.widthToSuperview()
-        defaultBackground.addSubview(choiceButton)
-        defaultBackground.addSubview(settingsButton)
-        settingsButton.topToSuperview(offset: 10)
-        settingsButton.rightToSuperview(offset: -10)
-        choiceButton.edgesToSuperview(insets: TinyEdgeInsets(top: 120, left: 105, bottom: 30, right: 105))
+        verticalStack.widthToSuperview(multiplier: 0.9) // под сомнением,можно придумать как убрать
+        verticalStack.centerInSuperview()
+        verticalStack.addArrangedSubview(horizontalStack)
+        verticalStack.addArrangedSubview(sepLine)
+        verticalStack.addArrangedSubview(placeholder)
+        horizontalStack.addArrangedSubview(cardText)
+        placeholder.widthToSuperview()
+        placeholder.addSubview(defaultImage)
+        placeholder.addSubview(choiceButton)
+        placeholder.addSubview(settingsButton)
+        defaultImage.centerInSuperview()
+        settingsButton.topToSuperview(offset: 40)
+        settingsButton.rightToSuperview(offset: -40)
+        choiceButton.edgesToSuperview(insets: TinyEdgeInsets(top: 140, left: 120, bottom: 40, right: 120))
+        cardText.leftToSuperview(offset: 20)
+        cardText.topToSuperview(offset: 5)
+        sepLine.widthToSuperview()
+        sepLine.heightToSuperview(multiplier: 0.005)
     }
 }
