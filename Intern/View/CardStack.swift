@@ -8,12 +8,13 @@
 import UIKit
 import SwiftUICore
 
-class CardList: UIView {
+class CardStack: UIView {
     
     var cardList: [Card] = []
      
     override init(frame: CGRect) {
         super.init(frame: frame)
+        initList()
         setupView()
     }
     
@@ -34,8 +35,8 @@ class CardList: UIView {
             cardStack.addArrangedSubview(card)
         }
         self.addSubview(cardStack)
-        cardStack.width(frame.size.width)
-        cardStack.height(frame.size.width)
+        cardStack.width(self.frame.width)
+        cardStack.height(self.frame.height - 150)
         cardStack.centerInSuperview()
     }
     
