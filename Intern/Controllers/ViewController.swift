@@ -12,7 +12,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemGray5
         let card = Card(frame: UIScreen.main.bounds)
         let stack = CardStack(frame: UIScreen.main.bounds)
         view.addSubview(stack)

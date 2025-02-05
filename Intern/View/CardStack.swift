@@ -45,8 +45,11 @@ class CardStack: UIView {
             cardList.append(Card())
         }
         cardList[0].cardText.text = "Город"
+        cardList[0].defaultImage.image = UIImage(named: "map_bckgrnd")
         cardList[1].cardText.text = "Погода"
+        cardList[1].defaultImage.image = UIImage(named: "weather_bckgrnd")
         cardList[2].cardText.text = "Курс криптовалют"
+        cardList[2].defaultImage.image = UIImage(named: "crypto_bckgrnd")
         
     }
 }
