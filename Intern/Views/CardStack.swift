@@ -27,6 +27,7 @@ class CardStack: UIView {
         stack.axis = .vertical
         stack.distribution = .fillEqually
         stack.spacing = 50
+        stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
     

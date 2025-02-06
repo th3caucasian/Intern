@@ -24,6 +24,7 @@ class Card: UIView {
         let button = UIButton(type: .system)
         let image = UIImage(named: "settings")
         button.setImage(image, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -40,11 +41,13 @@ class Card: UIView {
         button.layer.shadowOffset = CGSize(width: 0, height: 3)
         button.layer.shadowOpacity = 0.15
         button.layer.masksToBounds = false
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     private let placeholder: UIView = {
         let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -55,6 +58,7 @@ class Card: UIView {
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 20
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
@@ -71,11 +75,13 @@ class Card: UIView {
         stack.layer.shadowOpacity = 0.5
         stack.layer.shadowOffset = CGSize(width: 0, height: 2)
         stack.layer.masksToBounds = false
+        stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
     
     private let placeholder2: UIView = {
         let view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -83,12 +89,14 @@ class Card: UIView {
         let label = UILabel()
         label.text = "Template"
         label.font = UIFont.systemFont(ofSize: 17)
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     let sepLine: UIView = {
         let line = UIView()
         line.backgroundColor = .systemGray4
+        line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     

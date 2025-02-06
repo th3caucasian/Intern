@@ -7,26 +7,51 @@
 
 import Foundation
 import UIKit
+import TinyConstraints
 
 // Здесь используется view внтури класса, чтобы не загромождать проект. В идеале разделять ответственность и view делать как отдельный класс
-class TableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class MyTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var tableView: UITableView!
+    
+    var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.isEditing = true
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.layer.cornerRadius = 10
+        tableView.clipsToBounds = true
+        return tableView
+    }()
+    
     private var cardList = ["Карта","Погода","Криптовалюты"]
+    
+    private let wrapperView: UIView = {
+        let wrapper = UIView()
+        wrapper.backgroundColor = .white
+        wrapper.layer.cornerRadius = 10
+        wrapper.layer.shadowColor = UIColor.black.cgColor
+        wrapper.layer.shadowRadius = 5
+        wrapper.layer.shadowOpacity = 0.5
+        wrapper.layer.shadowOffset = CGSize(width: 0, height: 3)
+        wrapper.translatesAutoresizingMaskIntoConstraints = false
+        return wrapper
+    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemGray5
         setupView()
-        self.navigationItem.rightBarButtonItem = editButtonItem
+        
     }
     
     func setupView() {
-        tableView = UITableView(frame: view.bounds)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.isEditing = true
-        view.addSubview(tableView)
+        wrapperView.addSubview(tableView)
+        tableView.edgesToSuperview()
+        view.addSubview(wrapperView)
+        wrapperView.edgesToSuperview(insets: TinyEdgeInsets(top: 30, left: 20, bottom: 615, right: 20), usingSafeArea: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
