@@ -8,23 +8,25 @@
 import UIKit
 import TinyConstraints
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, TransmissionDelegate {
+    
+    var cardStack: CardStack!
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray5
         setupNavigationBar()
         
-        let card = Card(frame: UIScreen.main.bounds)
-        let stack = CardStack(frame: UIScreen.main.bounds)
-        view.addSubview(stack)
-        stack.edgesToSuperview(insets: TinyEdgeInsets(top: 30, left: 0, bottom: 30, right: 0), usingSafeArea: true)
-        stack.setupView()
+        cardStack = CardStack(frame: UIScreen.main.bounds)
+        view.addSubview(cardStack)
+        cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 30, left: 0, bottom: 30, right: 0), usingSafeArea: true)
+        cardStack.setupView()
         
 
     }
     
-    func setupNavigationBar() {
+    private func setupNavigationBar() {
         self.title = "Главный экран"
         if let navigationBar = self.navigationController?.navigationBar {
             if #available(iOS 13.0, *) {
@@ -55,7 +57,15 @@ class ViewController: UIViewController {
     
     @objc func buttonEditPressed() {
         let settings = SettingsController()
+        settings.transmissionDelegate = self
+        settings.cardList = cardStack.getCardOrder()
         self.navigationController?.pushViewController(settings, animated: true)
+    }
+    
+    func infoReceived(cardsOrder: [String]) {
+        if cardsOrder != cardStack.getCardOrder() {
+            cardStack.reorder(newOrder: cardsOrder)
+        }
     }
 }
 

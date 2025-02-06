@@ -6,13 +6,12 @@
 //
 
 import UIKit
-import SwiftUICore
 import TinyConstraints
 
 class CardStack: UIView {
     
     private var cardList: [Card] = []
-     
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         initList()
@@ -38,7 +37,6 @@ class CardStack: UIView {
         cardList.forEach {
             cardStack.addArrangedSubview($0)
             $0.setupView()
-
         }
     }
     
@@ -52,6 +50,30 @@ class CardStack: UIView {
         cardList[1].defaultImage.image = UIImage(named: "weather_bckgrnd")
         cardList[2].cardText.text = "Курс криптовалют"
         cardList[2].defaultImage.image = UIImage(named: "crypto_bckgrnd")
-        
+    }
+    
+    func reorder(newOrder: [String]) {
+        var tempList: [Card] = []
+        newOrder.forEach {
+            switch $0 {
+            case "Город":
+                tempList.append(cardList.first {$0.cardText.text! == "Город"}!)
+            case "Погода":
+                tempList.append(cardList.first {$0.cardText.text! == "Погода"}!)
+            case "Курс криптовалют":
+                tempList.append(cardList.first {$0.cardText.text! == "Курс криптовалют"}!)
+            default:
+                fatalError("Несоответствие списков")
+            }
+        }
+        cardList = tempList
+        cardStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        cardList.forEach { cardStack.addArrangedSubview($0) }
+    }
+    
+    func getCardOrder() -> [String] {
+        var tempList: [String] = []
+        cardList.forEach { tempList.append($0.cardText.text!) }
+        return tempList
     }
 }

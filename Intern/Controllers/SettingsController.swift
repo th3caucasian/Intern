@@ -5,12 +5,14 @@
 //  Created by Алан Эркенов on 06.02.2025.
 //
 
-import Foundation
 import UIKit
 import TinyConstraints
 
-// Здесь используется view внтури класса, чтобы не загромождать проект. В идеале разделять ответственность и view делать как отдельный класс
+
 class SettingsController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+
+    weak var transmissionDelegate: TransmissionDelegate?
+    var cardList: [String] = []
     
     var tableView: UITableView = {
         let tableView = UITableView()
@@ -22,7 +24,6 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
         return tableView
     }()
     
-    private var cardList = ["Карта","Погода","Криптовалюты"]
     
     private let wrapperView: UIView = {
         let wrapper = UIView()
@@ -53,8 +54,11 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
         wrapperView.edgesToSuperview(insets: TinyEdgeInsets(top: 30, left: 20, bottom: 545, right: 20), usingSafeArea: true)
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Готово", style: .plain, target: self, action: #selector(buttonSavePressed))
     }
+
+    
     
     @objc func buttonSavePressed() {
+        transmissionDelegate?.infoReceived(cardsOrder: cardList)
         self.navigationController?.popViewController(animated: true)
     }
     
