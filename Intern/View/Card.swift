@@ -54,16 +54,10 @@ class Card: UIView {
         imageView.image = UIImage(named: "map_bckgrnd")
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 20
         return imageView
     }()
     
-    private let imageHelper: UIView = {
-        let helper = UIView()
-        helper.layer.cornerRadius = 20
-        helper.layer.shadowColor = UIColor.black.cgColor
-        helper.backgroundColor = .red
-        return helper
-    }()
 
     private let verticalStack: UIStackView = {
         let stack = UIStackView()
@@ -80,11 +74,9 @@ class Card: UIView {
         return stack
     }()
     
-    private let horizontalStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.alignment = .fill
-        return stack
+    private let placeholder2: UIView = {
+        let view = UIStackView()
+        return view
     }()
     
     let cardText: UILabel = {
@@ -100,7 +92,6 @@ class Card: UIView {
         return line
     }()
     
-    let spacer = UIView()
     // map view
     
     // weather view
@@ -112,22 +103,30 @@ class Card: UIView {
         self.addSubview(verticalStack)
         verticalStack.widthToSuperview(multiplier: 0.9) // под сомнением,можно придумать как убрать
         verticalStack.centerInSuperview()
-        verticalStack.addArrangedSubview(horizontalStack)
+        verticalStack.addArrangedSubview(placeholder2)
         verticalStack.addArrangedSubview(sepLine)
         verticalStack.addArrangedSubview(placeholder)
-        horizontalStack.addArrangedSubview(cardText)
-        horizontalStack.addArrangedSubview(spacer)
-        horizontalStack.addArrangedSubview(settingsButton)
+        
+        placeholder2.addSubview(cardText)
+        placeholder2.addSubview(settingsButton)
+        placeholder2.widthToSuperview()
+        placeholder2.heightToSuperview(multiplier: 0.15)
+        
         placeholder.widthToSuperview()
         placeholder.addSubview(defaultImage)
         placeholder.addSubview(choiceButton)
+        
         defaultImage.centerInSuperview()
-        spacer.leftToRight(of: cardText, offset: 10)
-        settingsButton.topToSuperview(offset: 0)
-        settingsButton.rightToSuperview(offset: 0)
+        defaultImage.widthToSuperview(offset: -30)
+        
+        settingsButton.topToSuperview(offset: 6)
+        settingsButton.rightToSuperview(offset: -10)
+        
         choiceButton.edgesToSuperview(insets: TinyEdgeInsets(top: 130, left: 100, bottom: 30, right: 100))
+        
         cardText.leftToSuperview(offset: 20)
-        cardText.topToSuperview(offset: 5)
+        cardText.topToSuperview(offset: 7)
+        
         sepLine.widthToSuperview()
         sepLine.heightToSuperview(multiplier: 0.005)
     }

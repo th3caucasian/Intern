@@ -16,7 +16,7 @@ class ViewController: UIViewController {
         let card = Card(frame: UIScreen.main.bounds)
         let stack = CardStack(frame: UIScreen.main.bounds)
         view.addSubview(stack)
-        stack.edgesToSuperview(usingSafeArea: true)
+        stack.edgesToSuperview(insets: TinyEdgeInsets(top: 30, left: 0, bottom: 30, right: 0),usingSafeArea: true)
         stack.setupView()
     }
 }

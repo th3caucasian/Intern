@@ -26,6 +26,7 @@ class CardStack: UIView {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fillEqually
+        stack.spacing = 50
         return stack
     }()
     
