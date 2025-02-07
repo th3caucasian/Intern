@@ -70,7 +70,7 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
     }
     
     func cityChoicePressed() {
-        let citiesList = ListViewController(currentCase: "cities")
+        let citiesList = CitiesListController()
         self.navigationController?.pushViewController(citiesList, animated: true)
     }
 }
