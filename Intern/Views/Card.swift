@@ -7,6 +7,7 @@
 
 import UIKit
 import TinyConstraints
+import MapKit
 
 class Card: UIView {
     
@@ -85,7 +86,7 @@ class Card: UIView {
         return stack
     }()
     
-    private let placeholder2: UIView = {
+    private let upperPlaceholder: UIView = {
         let view = UIStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -107,6 +108,15 @@ class Card: UIView {
     }()
     
     // map view
+    private let mapView: MKMapView = {
+        let map = MKMapView()
+        map.translatesAutoresizingMaskIntoConstraints = false
+        map.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        map.isZoomEnabled = false
+        map.isScrollEnabled = false
+        map.layer.cornerRadius = 20
+        return map
+    }()
     
     // weather view
     
@@ -115,16 +125,16 @@ class Card: UIView {
 
     func setupView() {
         self.addSubview(verticalStack)
-        verticalStack.widthToSuperview(multiplier: 0.9) // под сомнением,можно придумать как убрать
+        verticalStack.widthToSuperview(multiplier: 0.9)
         verticalStack.centerInSuperview()
-        verticalStack.addArrangedSubview(placeholder2)
+        verticalStack.addArrangedSubview(upperPlaceholder)
         verticalStack.addArrangedSubview(sepLine)
         verticalStack.addArrangedSubview(placeholder)
         
-        placeholder2.addSubview(cardText)
-        placeholder2.addSubview(settingsButton)
-        placeholder2.widthToSuperview()
-        placeholder2.heightToSuperview(multiplier: 0.15)
+        upperPlaceholder.addSubview(cardText)
+        upperPlaceholder.addSubview(settingsButton)
+        upperPlaceholder.widthToSuperview()
+        upperPlaceholder.heightToSuperview(multiplier: 0.15)
         
         placeholder.widthToSuperview()
         placeholder.addSubview(defaultImage)
@@ -147,8 +157,10 @@ class Card: UIView {
     
     func setCityCard() {
         choiceButton.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
+        settingsButton.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
         cardText.text = "Город"
         defaultImage.image = UIImage(named: "map_bckgrnd")
+        
     }
     
     func setWeatherCard() {
@@ -165,5 +177,17 @@ class Card: UIView {
         buttonsHandlerDelegate?.cityChoicePressed()
     }
     
+    func setCity(latitude: Double, longitude: Double) {
+        if (choice == false) {
+            choice = true
+            choiceButton.isHidden = true
+            defaultImage.isHidden = true
+            placeholder.addSubview(mapView)
+            mapView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
+        }
+        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) // Москва
+        let region = MKCoordinateRegion(center: location, latitudinalMeters: 50_000, longitudinalMeters: 50_000)
+        mapView.setRegion(region, animated: true)
+    }
 
 }

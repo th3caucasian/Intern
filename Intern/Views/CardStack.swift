@@ -11,7 +11,7 @@ import TinyConstraints
 class CardStack: UIView {
     
     private var cardList: [Card] = []
-    var buttonsHandlerDelegate: ButtonsHandlerDelegate?
+    weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -73,5 +73,10 @@ class CardStack: UIView {
         var tempList: [String] = []
         cardList.forEach { tempList.append($0.cardText.text!) }
         return tempList
+    }
+    
+    func saveCity(latitude: Double, longitude: Double) {
+        let cityCard = cardList.first {$0.cardText.text! == "Город"}!
+        cityCard.setCity(latitude: latitude, longitude: longitude)
     }
 }

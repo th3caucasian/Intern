@@ -9,4 +9,5 @@
 protocol TransmissionDelegate: AnyObject {
     func infoReceived(cardsOrder: [String])
     
+    func saveCity(latitude: Double, longitude: Double)
 }

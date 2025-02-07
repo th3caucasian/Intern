@@ -11,6 +11,7 @@ class CitiesListController: ListViewController {
     
     private var citiesList: [City] = []
     private var filteredList: [City] = []
+    weak var transmissionDelegate: TransmissionDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,5 +46,12 @@ class CitiesListController: ListViewController {
         cell.leftLabel.text = item.abbreviation
         cell.mainLabel.text = item.name
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedItem = citiesList[indexPath.row]
+        transmissionDelegate?.saveCity(latitude: selectedItem.latitude, longitude: selectedItem.longitude)
+        self.navigationController?.popViewController(animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
