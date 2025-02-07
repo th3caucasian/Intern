@@ -107,7 +107,6 @@ class Card: UIView {
         return line
     }()
     
-    // map view
     private let mapView: MKMapView = {
         let map = MKMapView()
         map.translatesAutoresizingMaskIntoConstraints = false
@@ -164,6 +163,8 @@ class Card: UIView {
     }
     
     func setWeatherCard() {
+        choiceButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
+        settingsButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
         cardText.text = "Погода"
         defaultImage.image = UIImage(named: "weather_bckgrnd")
     }
@@ -174,7 +175,7 @@ class Card: UIView {
     }
     
     @objc func delegateCityChoicePressed() {
-        buttonsHandlerDelegate?.cityChoicePressed()
+        buttonsHandlerDelegate?.cityChoicePressed(type: "map")
     }
     
     func setCity(latitude: Double, longitude: Double) {
@@ -185,12 +186,22 @@ class Card: UIView {
             placeholder.addSubview(mapView)
             mapView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         }
-        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) // Москва
+        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) 
         let region = MKCoordinateRegion(center: location, latitudinalMeters: 20_000, longitudinalMeters: 20_000)
         let annotation = MKPointAnnotation()
         annotation.coordinate = location
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
     }
-
+    
+    
+    @objc func delegateWeatherPressed() {
+        buttonsHandlerDelegate?.cityChoicePressed(type: "weather")
+    }
+    
+    func setWeather(latitude: Double, longitude: Double) {
+        if (choice == false) {
+            
+        }
+    }
 }

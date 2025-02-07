@@ -11,6 +11,7 @@ import TinyConstraints
 class MainViewController: UIViewController, ButtonsHandlerDelegate, TransmissionDelegate {
     
     var cardStack: CardStack!
+    var lastDelegateUser: String?
 
 
     override func viewDidLoad() {
@@ -69,14 +70,15 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         }
     }
     
-    func cityChoicePressed() {
+    func cityChoicePressed(type: String) {
+        lastDelegateUser = type
         let citiesList = CitiesListController()
         citiesList.transmissionDelegate = self
         self.navigationController?.pushViewController(citiesList, animated: true)
     }
     
     func saveCity(latitude: Double, longitude: Double) {
-        cardStack.saveCity(latitude: latitude, longitude: longitude)
+        cardStack.saveCity(latitude: latitude, longitude: longitude, type: lastDelegateUser!)
     }
 }
 

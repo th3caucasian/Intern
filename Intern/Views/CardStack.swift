@@ -75,8 +75,16 @@ class CardStack: UIView {
         return tempList
     }
     
-    func saveCity(latitude: Double, longitude: Double) {
-        let cityCard = cardList.first {$0.cardText.text! == "Город"}!
-        cityCard.setCity(latitude: latitude, longitude: longitude)
+    func saveCity(latitude: Double, longitude: Double, type: String) {
+        switch type {
+        case "map":
+            let cityCard = cardList.first {$0.cardText.text! == "Город"}!
+            cityCard.setCity(latitude: latitude, longitude: longitude)
+        case "weather":
+            let weatherCard = cardList.first {$0.cardText.text! == "Погода"}!
+        default:
+            fatalError("Неверный параметр был передан в функцию")
+        }
+
     }
 }

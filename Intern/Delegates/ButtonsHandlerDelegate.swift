@@ -6,5 +6,5 @@
 //
 
 protocol ButtonsHandlerDelegate: AnyObject {
-    func cityChoicePressed()
+    func cityChoicePressed(type: String)
 }

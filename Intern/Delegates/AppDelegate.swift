@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationController = UINavigationController(rootViewController: MainViewController())
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = navigationController
-        //window?.rootViewController = ListViewController(currentCase: "cities")
         window?.makeKeyAndVisible()
         return true
     }
