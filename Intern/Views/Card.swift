@@ -186,8 +186,11 @@ class Card: UIView {
             mapView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         }
         let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) // Москва
-        let region = MKCoordinateRegion(center: location, latitudinalMeters: 50_000, longitudinalMeters: 50_000)
+        let region = MKCoordinateRegion(center: location, latitudinalMeters: 20_000, longitudinalMeters: 20_000)
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = location
         mapView.setRegion(region, animated: true)
+        mapView.addAnnotation(annotation)
     }
 
 }
