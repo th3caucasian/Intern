@@ -16,8 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let navigationController = UINavigationController(rootViewController: MainViewController())
         window = UIWindow(frame: UIScreen.main.bounds)
-        //window?.rootViewController = navigationController
-        window?.rootViewController = ListViewController()
+        window?.rootViewController = navigationController
+        //window?.rootViewController = ListViewController(currentCase: "cities")
         window?.makeKeyAndVisible()
         return true
     }

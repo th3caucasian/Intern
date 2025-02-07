@@ -11,6 +11,12 @@ import TinyConstraints
 class Card: UIView {
     
     private var choice = false
+    private var buttonsHandlerDelegate: ButtonsHandlerDelegate?
+    
+    convenience init(delegate: ButtonsHandlerDelegate) {
+        self.init()
+        buttonsHandlerDelegate = delegate
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -93,7 +99,7 @@ class Card: UIView {
         return label
     }()
     
-    let sepLine: UIView = {
+    private let sepLine: UIView = {
         let line = UIView()
         line.backgroundColor = .systemGray4
         line.translatesAutoresizingMaskIntoConstraints = false
@@ -138,4 +144,26 @@ class Card: UIView {
         sepLine.widthToSuperview()
         sepLine.heightToSuperview(multiplier: 0.005)
     }
+    
+    func setCityCard() {
+        choiceButton.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
+        cardText.text = "Город"
+        defaultImage.image = UIImage(named: "map_bckgrnd")
+    }
+    
+    func setWeatherCard() {
+        cardText.text = "Погода"
+        defaultImage.image = UIImage(named: "weather_bckgrnd")
+    }
+    
+    func setCryptoCard() {
+        cardText.text = "Курс криптовалют"
+        defaultImage.image = UIImage(named: "crypto_bckgrnd")
+    }
+    
+    @objc func delegateCityChoicePressed() {
+        buttonsHandlerDelegate?.cityChoicePressed()
+    }
+    
+
 }

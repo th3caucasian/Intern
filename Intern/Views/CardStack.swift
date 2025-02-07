@@ -11,10 +11,10 @@ import TinyConstraints
 class CardStack: UIView {
     
     private var cardList: [Card] = []
+    var buttonsHandlerDelegate: ButtonsHandlerDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        initList()
     }
     
     required init?(coder: NSCoder) {
@@ -31,6 +31,7 @@ class CardStack: UIView {
     }()
     
     func setupView() {
+        initList()
         self.addSubview(cardStack)
         cardStack.edgesToSuperview()
         cardStack.centerInSuperview()
@@ -42,14 +43,11 @@ class CardStack: UIView {
     
     private func initList() {
         for _ in 0...2 {
-            cardList.append(Card())
+            cardList.append(Card(delegate: buttonsHandlerDelegate!))
         }
-        cardList[0].cardText.text = "Город"
-        cardList[0].defaultImage.image = UIImage(named: "map_bckgrnd")
-        cardList[1].cardText.text = "Погода"
-        cardList[1].defaultImage.image = UIImage(named: "weather_bckgrnd")
-        cardList[2].cardText.text = "Курс криптовалют"
-        cardList[2].defaultImage.image = UIImage(named: "crypto_bckgrnd")
+        cardList[0].setCityCard()
+        cardList[1].setWeatherCard()
+        cardList[2].setCryptoCard()
     }
     
     func reorder(newOrder: [String]) {

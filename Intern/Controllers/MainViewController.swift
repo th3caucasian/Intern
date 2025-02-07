@@ -8,7 +8,7 @@
 import UIKit
 import TinyConstraints
 
-class MainViewController: UIViewController, TransmissionDelegate {
+class MainViewController: UIViewController, ButtonsHandlerDelegate, TransmissionDelegate {
     
     var cardStack: CardStack!
 
@@ -19,6 +19,7 @@ class MainViewController: UIViewController, TransmissionDelegate {
         setupNavigationBar()
         
         cardStack = CardStack(frame: UIScreen.main.bounds)
+        cardStack.buttonsHandlerDelegate = self
         view.addSubview(cardStack)
         cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 30, left: 0, bottom: 30, right: 0), usingSafeArea: true)
         cardStack.setupView()
@@ -66,6 +67,11 @@ class MainViewController: UIViewController, TransmissionDelegate {
         if cardsOrder != cardStack.getCardOrder() {
             cardStack.reorder(newOrder: cardsOrder)
         }
+    }
+    
+    func cityChoicePressed() {
+        let citiesList = ListViewController(currentCase: "cities")
+        self.navigationController?.pushViewController(citiesList, animated: true)
     }
 }
 
