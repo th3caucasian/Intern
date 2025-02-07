@@ -8,7 +8,7 @@
 import UIKit
 import TinyConstraints
 
-class ViewController: UIViewController, TransmissionDelegate {
+class MainViewController: UIViewController, TransmissionDelegate {
     
     var cardStack: CardStack!
 

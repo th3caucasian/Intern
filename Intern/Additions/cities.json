@@ -1,0 +1,22 @@
+[
+  { "name": "Москва", "latitude": 55.7558, "longitude": 37.6173, "abbreviation": "RU" },
+  { "name": "Нью-Йорк", "latitude": 40.7128, "longitude": -74.0060, "abbreviation": "US" },
+  { "name": "Лондон", "latitude": 51.5074, "longitude": -0.1278, "abbreviation": "GB" },
+  { "name": "Токио", "latitude": 35.6895, "longitude": 139.6917, "abbreviation": "JP" },
+  { "name": "Берлин", "latitude": 52.5200, "longitude": 13.4050, "abbreviation": "DE" },
+  { "name": "Париж", "latitude": 48.8566, "longitude": 2.3522, "abbreviation": "FR" },
+  { "name": "Пекин", "latitude": 39.9042, "longitude": 116.4074, "abbreviation": "CN" },
+  { "name": "Сидней", "latitude": -33.8688, "longitude": 151.2093, "abbreviation": "AU" },
+  { "name": "Буэнос-Айрес", "latitude": -34.6037, "longitude": -58.3816, "abbreviation": "AR" },
+  { "name": "Каир", "latitude": 30.0444, "longitude": 31.2357, "abbreviation": "EG" },
+  { "name": "Мехико", "latitude": 19.4326, "longitude": -99.1332, "abbreviation": "MX" },
+  { "name": "Торонто", "latitude": 43.6511, "longitude": -79.3832, "abbreviation": "CA" },
+  { "name": "Стамбул", "latitude": 41.0082, "longitude": 28.9784, "abbreviation": "TR" },
+  { "name": "Сеул", "latitude": 37.5665, "longitude": 126.9780, "abbreviation": "KR" },
+  { "name": "Мадрид", "latitude": 40.4168, "longitude": -3.7038, "abbreviation": "ES" },
+  { "name": "Рим", "latitude": 41.9028, "longitude": 12.4964, "abbreviation": "IT" },
+  { "name": "Бангкок", "latitude": 13.7563, "longitude": 100.5018, "abbreviation": "TH" },
+  { "name": "Йоханнесбург", "latitude": -26.2041, "longitude": 28.0473, "abbreviation": "ZA" },
+  { "name": "Дубай", "latitude": 25.2769, "longitude": 55.2962, "abbreviation": "AE" },
+  { "name": "Сингапур", "latitude": 1.3521, "longitude": 103.8198, "abbreviation": "SG" }
+]
