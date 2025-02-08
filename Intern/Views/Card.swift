@@ -170,6 +170,7 @@ class Card: UIView {
         settingsButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
         cardText.text = "Погода"
         defaultImage.image = UIImage(named: "weather_bckgrnd")
+        weatherView.setupView()
     }
     
     
@@ -220,13 +221,14 @@ class Card: UIView {
                 self?.weatherView.fillData(
                     city: decodedWeather.name,
                     weather: decodedWeather.weather[0].main,
-                    temperature: String(decodedWeather.main.temp),
-                    feelsLike: String(decodedWeather.main.feels_like),
+                    temperature: String(format: "%.1f", decodedWeather.main.temp) + "ºC",
+                    feelsLike: String(format: "%.1f", decodedWeather.main.feels_like) + "ºC",
                     wind: String(decodedWeather.wind.speed),
+                    windDegree: decodedWeather.wind.deg,
                     pressure: String(decodedWeather.main.pressure),
                     humidity: String(decodedWeather.main.humidity),
                     cloudness: String(decodedWeather.clouds.all),
-                    visibility: String(decodedWeather.visibility))
+                    visibility: String(decodedWeather.visibility / 1000))
                 
                 self?.choiceButton.isHidden = true
                 self?.defaultImage.isHidden = true
@@ -238,13 +240,12 @@ class Card: UIView {
     
     private func fetchWeather(latitude: Double, longitude: Double, completition: @escaping (WeatherModel?)->(Void)) {
         let moyaProvider = MoyaProvider<WeatherAPI>()
-        var decoded: WeatherModel?
         
-        let query = moyaProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { result in
+        moyaProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { result in
             switch result {
             case .success(let response):
                 do {
-                    decoded = try JSONDecoder().decode(WeatherModel.self, from: response.data)
+                    let decoded = try JSONDecoder().decode(WeatherModel.self, from: response.data)
                     completition(decoded)
                 } catch {
                     print("Ошибка парсинга \(error)")
@@ -253,5 +254,9 @@ class Card: UIView {
                 print("Ошибка сети \(error.localizedDescription)")
             }
         }
+    }
+    
+    func farenheitToCelcius(_ farenheit: Double) -> Double {
+        return (farenheit - 32) * 5 / 9
     }
 }

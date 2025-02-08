@@ -29,7 +29,7 @@ enum WeatherAPI: TargetType {
         switch self {
         case .getWeather(let latitude, let longitude):
             let apiKey = Bundle.main.object(forInfoDictionaryKey: "WeatherApiKey") as! String
-            return .requestParameters(parameters: ["lat": latitude, "lon": longitude, "appid": apiKey], encoding: URLEncoding.default)
+            return .requestParameters(parameters: ["lat": latitude, "lon": longitude, "appid": apiKey, "units": "metric", "lang": "ru"], encoding: URLEncoding.default)
         }
     }
     
