@@ -118,6 +118,7 @@ class Card: UIView {
     }()
     
     // weather view
+    private let weatherView = WeatherView()
     
     // cryptocurrency view
     
@@ -138,7 +139,7 @@ class Card: UIView {
         placeholder.widthToSuperview()
         placeholder.addSubview(defaultImage)
         placeholder.addSubview(choiceButton)
-        
+
         defaultImage.centerInSuperview()
         defaultImage.widthToSuperview(offset: -30)
         
@@ -162,21 +163,31 @@ class Card: UIView {
         
     }
     
+    
     func setWeatherCard() {
         choiceButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
         settingsButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
         cardText.text = "Погода"
         defaultImage.image = UIImage(named: "weather_bckgrnd")
+        
+        weatherView.setupView()
+        choiceButton.isHidden = true
+        defaultImage.isHidden = true
+        placeholder.addSubview(weatherView)
+        weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
     }
+    
     
     func setCryptoCard() {
         cardText.text = "Курс криптовалют"
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
     }
     
+    
     @objc func delegateCityChoicePressed() {
         buttonsHandlerDelegate?.cityChoicePressed(type: "map")
     }
+    
     
     func setCity(latitude: Double, longitude: Double) {
         if (choice == false) {
@@ -195,13 +206,19 @@ class Card: UIView {
     }
     
     
+    
     @objc func delegateWeatherPressed() {
         buttonsHandlerDelegate?.cityChoicePressed(type: "weather")
     }
     
+    
     func setWeather(latitude: Double, longitude: Double) {
         if (choice == false) {
-            
+            choice = true
+            choiceButton.isHidden = true
+            defaultImage.isHidden = true
+            placeholder.addSubview(weatherView)
+            weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         }
     }
 }
