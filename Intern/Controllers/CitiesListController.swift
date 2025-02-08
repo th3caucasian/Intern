@@ -36,6 +36,7 @@ class CitiesListController: ListViewController {
         tableView.reloadData()
     }
     
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return navigationItem.searchController != nil ? filteredList.count: citiesList.count
     }

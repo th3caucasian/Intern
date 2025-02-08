@@ -42,6 +42,7 @@ class CustomCell: UITableViewCell {
         contentView.addSubview(horizontalStack)
         horizontalStack.edgesToSuperview()
     }
+
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) еще не реализован" )

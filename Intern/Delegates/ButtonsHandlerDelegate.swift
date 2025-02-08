@@ -7,4 +7,6 @@
 
 protocol ButtonsHandlerDelegate: AnyObject {
     func cityChoicePressed(type: String)
+    
+    func cryptoChoicePressed()
 }

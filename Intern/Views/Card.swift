@@ -175,6 +175,8 @@ class Card: UIView {
     
     
     func setCryptoCard() {
+        choiceButton.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
+        settingsButton.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
         cardText.text = "Курс криптовалют"
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
     }
@@ -182,6 +184,14 @@ class Card: UIView {
     
     @objc func delegateCityChoicePressed() {
         buttonsHandlerDelegate?.cityChoicePressed(type: "map")
+    }
+    
+    @objc func delegateWeatherPressed() {
+        buttonsHandlerDelegate?.cityChoicePressed(type: "weather")
+    }
+    
+    @objc func delegateCryptoPressed() {
+        buttonsHandlerDelegate?.cryptoChoicePressed()
     }
     
     
@@ -202,11 +212,7 @@ class Card: UIView {
     }
     
     
-    
-    @objc func delegateWeatherPressed() {
-        buttonsHandlerDelegate?.cityChoicePressed(type: "weather")
-    }
-    
+
     
     func setWeather(latitude: Double, longitude: Double, city: String) {
         if (choice == false) {
@@ -257,7 +263,4 @@ class Card: UIView {
         }
     }
     
-    func farenheitToCelcius(_ farenheit: Double) -> Double {
-        return (farenheit - 32) * 5 / 9
-    }
 }
