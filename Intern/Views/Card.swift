@@ -208,7 +208,7 @@ class Card: UIView {
     }
     
     
-    func setWeather(latitude: Double, longitude: Double) {
+    func setWeather(latitude: Double, longitude: Double, city: String) {
         if (choice == false) {
             choice = true
             choiceButton.isHidden = true
@@ -219,8 +219,9 @@ class Card: UIView {
         fetchWeather(latitude: latitude, longitude: longitude) { [weak self] weather in
             if let decodedWeather = weather {
                 self?.weatherView.fillData(
-                    city: decodedWeather.name,
-                    weather: decodedWeather.weather[0].main,
+                    city: city,
+                    image: decodedWeather.weather[0].icon,
+                    weather: decodedWeather.weather[0].description,
                     temperature: String(format: "%.1f", decodedWeather.main.temp) + "ºC",
                     feelsLike: String(format: "%.1f", decodedWeather.main.feels_like) + "ºC",
                     wind: String(decodedWeather.wind.speed),

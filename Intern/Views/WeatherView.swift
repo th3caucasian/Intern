@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import Kingfisher
 
 class WeatherView: UIView {
     
@@ -34,12 +34,14 @@ class WeatherView: UIView {
         imageView.image = UIImage(systemName: "location.north.fill")
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tintColor = .black
         return imageView
     }()
     
-    func fillData(city: String, weather: String, temperature: String, feelsLike: String, wind: String, windDegree: Int, pressure: String, humidity: String, cloudness: String, visibility: String) {
+    func fillData(city: String, image: String, weather: String, temperature: String, feelsLike: String, wind: String, windDegree: Int, pressure: String, humidity: String, cloudness: String, visibility: String) {
         cityText!.text = city
         weatherText!.text = weather
+        weatherImage.kf.setImage(with: URL(string: "https://openweathermap.org/img/wn/\(image)@2x.png"))
         temperatureValue!.text = temperature
         feelsLikeValue!.text = feelsLike
         windValue!.text = wind
@@ -81,6 +83,7 @@ class WeatherView: UIView {
         
         self.addSubview(cityText!)
         self.addSubview(weatherText!)
+        self.addSubview(weatherImage)
         self.addSubview(feelsLikeText)
         self.addSubview(feelsLikeValue!)
         self.addSubview(temperatureValue!)
@@ -107,8 +110,11 @@ class WeatherView: UIView {
         
         weatherText?.topToSuperview(offset: 40)
         weatherText?.leftToSuperview(offset: 12)
-
-        temperatureValue?.font = UIFont.boldSystemFont(ofSize: 30)
+        
+        weatherImage.topToSuperview(offset: 50)
+        weatherImage.rightToLeft(of: temperatureValue!, offset: 5)
+        
+        temperatureValue?.font = UIFont.systemFont(ofSize: 25, weight: .bold)
         temperatureValue?.bottomToSuperview(offset: -60)
         temperatureValue?.rightToLeft(of: pressureText, offset: -5)
         

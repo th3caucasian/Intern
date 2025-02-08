@@ -78,8 +78,8 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         self.navigationController?.pushViewController(citiesList, animated: true)
     }
     
-    func saveCity(latitude: Double, longitude: Double) {
-        cardStack.saveCity(latitude: latitude, longitude: longitude, type: lastDelegateUser!)
+    func saveCity(latitude: Double, longitude: Double, city: String) {
+        cardStack.saveCity(latitude: latitude, longitude: longitude, type: lastDelegateUser!, city: city)
     }
     
     
