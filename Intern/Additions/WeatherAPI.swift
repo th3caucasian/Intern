@@ -11,7 +11,7 @@ enum WeatherAPI: TargetType {
     case getWeather(latitude: Double, longitude: Double)
     
     var baseURL: URL {
-        return URL(string: "https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}")!
+        return URL(string: "https://api.openweathermap.org/data/2.5")!
     }
     
     var path: String {
@@ -28,7 +28,7 @@ enum WeatherAPI: TargetType {
     var task: Task {
         switch self {
         case .getWeather(let latitude, let longitude):
-            let apiKey = Bundle.main.infoDictionary?["API key"] as! String
+            let apiKey = Bundle.main.object(forInfoDictionaryKey: "WeatherApiKey") as! String
             return .requestParameters(parameters: ["lat": latitude, "lon": longitude, "appid": apiKey], encoding: URLEncoding.default)
         }
     }

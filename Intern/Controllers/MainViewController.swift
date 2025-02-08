@@ -7,11 +7,12 @@
 
 import UIKit
 import TinyConstraints
+import Moya
 
 class MainViewController: UIViewController, ButtonsHandlerDelegate, TransmissionDelegate {
     
-    var cardStack: CardStack!
-    var lastDelegateUser: String?
+    private var cardStack: CardStack!
+    private var lastDelegateUser: String?
 
 
     override func viewDidLoad() {
@@ -80,6 +81,8 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
     func saveCity(latitude: Double, longitude: Double) {
         cardStack.saveCity(latitude: latitude, longitude: longitude, type: lastDelegateUser!)
     }
+    
+    
 }
 
 

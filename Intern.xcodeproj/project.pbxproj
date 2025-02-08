@@ -275,6 +275,8 @@
 		};
 		BF0B11402D51FF53005EFFDA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = BF0B112C2D51FF52005EFFDA /* Intern */;
+			baseConfigurationReferenceRelativePath = Additions/Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -338,6 +340,8 @@
 		};
 		BF0B11412D51FF53005EFFDA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = BF0B112C2D51FF52005EFFDA /* Intern */;
+			baseConfigurationReferenceRelativePath = Additions/Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

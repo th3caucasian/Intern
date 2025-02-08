@@ -10,6 +10,7 @@ import UIKit
 
 class WeatherView: UIView {
     
+    var cityText: UILabel?
     var weatherText: UILabel?
     var temperatureValue: UILabel?
     var feelsLikeValue: UILabel?
@@ -20,14 +21,6 @@ class WeatherView: UIView {
     var visibilityValue: UILabel?
     
     
-    private let cityLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-        
     private let weatherImage: UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFit
@@ -35,11 +28,22 @@ class WeatherView: UIView {
         return image
     }()
     
+    func fillData(city: String, weather: String, temperature: String, feelsLike: String, wind: String, pressure: String, humidity: String, cloudness: String, visibility: String) {
+        cityText = createValueLabel(text: city)
+        weatherText = createTextLabel(text: weather)
+        temperatureValue = createValueLabel(text: temperature)
+        feelsLikeValue = createValueLabel(text: feelsLike)
+        windValue = createValueLabel(text: wind)
+        pressureValue = createValueLabel(text: pressure)
+        humidityValue = createValueLabel(text: humidity)
+        cloudnessValue = createValueLabel(text: cloudness)
+        visibilityValue = createValueLabel(text: visibility)
+        setupView()
+    }
 
-    func setupView() {
+    private func setupView() {
         self.backgroundColor = .lightBlue.withAlphaComponent(0.2)
         self.layer.cornerRadius = 20
-
 
         let feelsLikeText = createTextLabel(text: "Ощущается как")
         let windText = createTextLabel(text: "Ветер")
@@ -54,17 +58,7 @@ class WeatherView: UIView {
         let mmRtStText = createTextLabel(text: "м.р.ст")
         
         
-        
-        weatherText = createTextLabel(text: "пасмурно")
-        temperatureValue = createValueLabel(text: "5.1ºC")
-        feelsLikeValue = createValueLabel(text: "2.0ºC")
-        windValue = createValueLabel(text: "4.02")
-        pressureValue = createValueLabel(text: "753.9")
-        humidityValue = createValueLabel(text: "70")
-        cloudnessValue = createValueLabel(text: "99")
-        visibilityValue = createValueLabel(text: "10.0")
-        
-        self.addSubview(cityLabel)
+        self.addSubview(cityText!)
         self.addSubview(weatherText!)
         self.addSubview(feelsLikeText)
         self.addSubview(feelsLikeValue!)
@@ -86,9 +80,8 @@ class WeatherView: UIView {
         self.addSubview(kmText)
         
         
-        cityLabel.text = "Ростов-на-Дону"
-        cityLabel.topToSuperview(offset: 10)
-        cityLabel.leftToSuperview(offset: 12)
+        cityText!.topToSuperview(offset: 10)
+        cityText!.leftToSuperview(offset: 12)
         
         weatherText?.topToSuperview(offset: 40)
         weatherText?.leftToSuperview(offset: 12)

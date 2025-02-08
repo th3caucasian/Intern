@@ -8,6 +8,7 @@
 import UIKit
 import TinyConstraints
 import MapKit
+import Moya
 
 class Card: UIView {
     
@@ -169,12 +170,6 @@ class Card: UIView {
         settingsButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
         cardText.text = "Погода"
         defaultImage.image = UIImage(named: "weather_bckgrnd")
-        
-        weatherView.setupView()
-        choiceButton.isHidden = true
-        defaultImage.isHidden = true
-        placeholder.addSubview(weatherView)
-        weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
     }
     
     
@@ -219,6 +214,44 @@ class Card: UIView {
             defaultImage.isHidden = true
             placeholder.addSubview(weatherView)
             weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
+        }
+        fetchWeather(latitude: latitude, longitude: longitude) { [weak self] weather in
+            if let decodedWeather = weather {
+                self?.weatherView.fillData(
+                    city: decodedWeather.name,
+                    weather: decodedWeather.weather[0].main,
+                    temperature: String(decodedWeather.main.temp),
+                    feelsLike: String(decodedWeather.main.feels_like),
+                    wind: String(decodedWeather.wind.speed),
+                    pressure: String(decodedWeather.main.pressure),
+                    humidity: String(decodedWeather.main.humidity),
+                    cloudness: String(decodedWeather.clouds.all),
+                    visibility: String(decodedWeather.visibility))
+                
+                self?.choiceButton.isHidden = true
+                self?.defaultImage.isHidden = true
+                self?.placeholder.addSubview(self!.weatherView)
+                self?.weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
+            }
+        }
+    }
+    
+    private func fetchWeather(latitude: Double, longitude: Double, completition: @escaping (WeatherModel?)->(Void)) {
+        let moyaProvider = MoyaProvider<WeatherAPI>()
+        var decoded: WeatherModel?
+        
+        let query = moyaProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { result in
+            switch result {
+            case .success(let response):
+                do {
+                    decoded = try JSONDecoder().decode(WeatherModel.self, from: response.data)
+                    completition(decoded)
+                } catch {
+                    print("Ошибка парсинга \(error)")
+                }
+            case .failure(let error):
+                print("Ошибка сети \(error.localizedDescription)")
+            }
         }
     }
 }

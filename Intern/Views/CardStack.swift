@@ -82,6 +82,7 @@ class CardStack: UIView {
             cityCard.setCity(latitude: latitude, longitude: longitude)
         case "weather":
             let weatherCard = cardList.first {$0.cardText.text! == "Погода"}!
+            weatherCard.setWeather(latitude: latitude, longitude: longitude)
         default:
             fatalError("Неверный параметр был передан в функцию")
         }
