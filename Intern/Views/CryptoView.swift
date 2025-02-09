@@ -32,6 +32,7 @@ class CryptoView: UIView {
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.contentMode = .scaleAspectFit
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .center
         return label
     }()
     
@@ -40,6 +41,7 @@ class CryptoView: UIView {
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.contentMode = .scaleAspectFit
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .center
         return label
     }()
     
@@ -48,6 +50,14 @@ class CryptoView: UIView {
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
+    }()
+    
+    private let horizontalStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
     }()
     
     func fillData(cryptoName: String, cryptoImage: String, cryptoPrice: String, priceDynamic: String) {
@@ -59,8 +69,7 @@ class CryptoView: UIView {
             self.priceDynamic.textColor = .red
             self.arrowImage.tintColor = .red
             self.arrowImage.image = UIImage(systemName: "arrow.down")
-        }
-        else {
+        } else {
             self.priceDynamic.textColor = .systemGreen
             self.priceDynamic.text = "+" + self.priceDynamic.text!
             self.arrowImage.tintColor = .systemGreen
@@ -73,8 +82,9 @@ class CryptoView: UIView {
         self.addSubview(cryptoName)
         self.addSubview(cryptoImage)
         self.addSubview(cryptoPrice)
-        self.addSubview(priceDynamic)
-        self.addSubview(arrowImage)
+        self.addSubview(horizontalStack)
+        horizontalStack.addArrangedSubview(priceDynamic)
+        horizontalStack.addArrangedSubview(arrowImage)
         
         self.backgroundColor = .white
         self.layer.cornerRadius = 20
@@ -85,24 +95,22 @@ class CryptoView: UIView {
         self.translatesAutoresizingMaskIntoConstraints = false
         
         cryptoName.widthToSuperview(multiplier: 0.9)
-        cryptoName.centerXToSuperview(offset: 0)
+        cryptoName.centerXToSuperview()
         cryptoName.topToSuperview(offset: 20)
         
         cryptoImage.topToBottom(of: cryptoName, offset: 10)
         cryptoImage.widthToSuperview(multiplier: 0.9)
-        cryptoImage.centerXToSuperview(offset: 0)
+        cryptoImage.centerXToSuperview()
         cryptoImage.height(70)
         
         cryptoPrice.widthToSuperview(multiplier: 0.9)
-        cryptoPrice.centerXToSuperview(offset: 0)
+        cryptoPrice.centerXToSuperview()
         cryptoPrice.topToBottom(of: cryptoImage, offset: 10)
         
-        priceDynamic.widthToSuperview(multiplier: 0.9)
-        priceDynamic.centerXToSuperview(offset: 0)
-        priceDynamic.topToBottom(of: cryptoPrice, offset: 5)
-        
         arrowImage.height(15)
-        arrowImage.leftToRight(of: priceDynamic, offset: 2)
-        arrowImage.topToBottom(of: cryptoPrice, offset: 4)
+        
+        horizontalStack.topToBottom(of: cryptoPrice, offset: 4)
+        horizontalStack.centerXToSuperview()
+
     }
 }
