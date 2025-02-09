@@ -10,15 +10,15 @@ import Kingfisher
 
 class WeatherView: UIView {
     
-    var cityText: UILabel?
-    var weatherText: UILabel?
-    var temperatureValue: UILabel?
-    var feelsLikeValue: UILabel?
-    var windValue: UILabel?
-    var pressureValue: UILabel?
-    var humidityValue : UILabel?
-    var cloudnessValue: UILabel?
-    var visibilityValue: UILabel?
+    private var cityText: UILabel?
+    private var weatherText: UILabel?
+    private var temperatureValue: UILabel?
+    private var feelsLikeValue: UILabel?
+    private var windValue: UILabel?
+    private var pressureValue: UILabel?
+    private var humidityValue : UILabel?
+    private var cloudnessValue: UILabel?
+    private var visibilityValue: UILabel?
     
     
     private let weatherImage: UIImageView = {
@@ -162,7 +162,7 @@ class WeatherView: UIView {
         kmText.bottomToSuperview(offset: -10)
     }
     
-    func createTextLabel(text: String) -> UILabel {
+    private func createTextLabel(text: String) -> UILabel {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .light)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -170,7 +170,7 @@ class WeatherView: UIView {
         return label
     }
     
-    func createValueLabel(text: String) -> UILabel {
+    private func createValueLabel(text: String) -> UILabel {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false

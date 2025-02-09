@@ -86,6 +86,10 @@ class CardStack: UIView {
         default:
             fatalError("Неверный параметр был передан в функцию")
         }
-
+    }
+    
+    func saveCryptoList(cryptoList: [Crypto]) {
+        let cryptoView = cardList.first {$0.cardText.text! == "Курс криптовалют"}!
+        cryptoView.setCrypto(cryptoList: cryptoList)
     }
 }

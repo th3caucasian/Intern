@@ -118,11 +118,18 @@ class Card: UIView {
         return map
     }()
     
-    // weather view
     private let weatherView = WeatherView()
     
-    // cryptocurrency view
     
+    private let horizontalStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.distribution = .equalCentering
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = 8
+        return stack
+    }()
 
     func setupView() {
         self.addSubview(verticalStack)
@@ -154,6 +161,7 @@ class Card: UIView {
         
         sepLine.widthToSuperview()
         sepLine.heightToSuperview(multiplier: 0.005)
+        
     }
     
     func setCityCard() {
@@ -180,6 +188,7 @@ class Card: UIView {
         cardText.text = "Курс криптовалют"
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
     }
+    
     
     
     @objc func delegateCityChoicePressed() {
@@ -212,7 +221,6 @@ class Card: UIView {
     }
     
     
-
     
     func setWeather(latitude: Double, longitude: Double, city: String) {
         if (choice == false) {
@@ -245,6 +253,32 @@ class Card: UIView {
         }
     }
     
+    
+    func setCrypto(cryptoList: [Crypto]) {
+        var cryptoViews: [CryptoView] = []
+        if (choice == false) {
+            choice = true
+            choiceButton.isHidden = true
+            defaultImage.isHidden = true
+            let leftSpacer: UIView = UIView()
+            let rightSpacer: UIView = UIView()
+            placeholder.addSubview(horizontalStack)
+            horizontalStack.edgesToSuperview()
+            horizontalStack.addArrangedSubview(leftSpacer)
+            horizontalStack.addArrangedSubview(rightSpacer)
+        }
+        for i in cryptoList.indices {
+            cryptoViews.append(CryptoView())
+            let crypto = cryptoList[i]
+            let dynamic = crypto.current_price / 100 * crypto.price_change_percentage_1h_in_currency
+            cryptoViews[i].fillData(cryptoName: crypto.id, cryptoImage: crypto.image, cryptoPrice: String(crypto.current_price) + " $", priceDynamic: String(format: "%.4f", dynamic))
+            horizontalStack.insertArrangedSubview(cryptoViews[i], at: horizontalStack.subviews.count - 1)
+            cryptoViews[i].widthToSuperview(multiplier: 0.3)
+            cryptoViews[i].heightToSuperview(multiplier: 0.9)
+        }
+    }
+    
+    
     private func fetchWeather(latitude: Double, longitude: Double, completition: @escaping (WeatherModel?)->(Void)) {
         let moyaProvider = MoyaProvider<WeatherAPI>()
         
@@ -262,5 +296,4 @@ class Card: UIView {
             }
         }
     }
-    
 }

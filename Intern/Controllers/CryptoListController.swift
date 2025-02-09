@@ -9,7 +9,7 @@ import UIKit
 import Moya
 import Kingfisher
 
-class CryptoListController: ListViewController {
+class CryptoListController: ListViewController, UINavigationControllerDelegate {
     
     private var cryptoList: [Crypto] = []
     private var filteredList: [Crypto] = []
@@ -62,6 +62,15 @@ class CryptoListController: ListViewController {
             }
         }
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if self.isMovingFromParent {
+            transmissionDelegate?.saveCryptoList(cryptoList: selectedCrypto)
+        }
+    }
+    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return navigationItem.searchController != nil ? filteredList.count: cryptoList.count

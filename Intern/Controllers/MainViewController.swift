@@ -88,7 +88,9 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         cardStack.saveCity(latitude: latitude, longitude: longitude, type: lastDelegateUser!, city: city)
     }
     
-    
+    func saveCryptoList(cryptoList: [Crypto]) {
+        cardStack.saveCryptoList(cryptoList: cryptoList)
+    }
 }
 
 
