@@ -20,6 +20,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupList()
+
     }
     
     override func setupList() {
@@ -45,7 +46,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
         tableView.reloadData()
     }
     
-    private func fetchCrypto(completition: @escaping ([Crypto]?)->(Void)) {
+    func fetchCrypto(completition: @escaping ([Crypto]?)->(Void)) {
         let moyaProvider = MoyaProvider<CryptoAPI>()
         
         moyaProvider.request(.getCryptoList) { result in
@@ -68,6 +69,9 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
         
         if self.isMovingFromParent {
             transmissionDelegate?.saveCryptoList(cryptoList: selectedCrypto)
+            if let cryptosEncoded = try? JSONEncoder().encode(selectedCrypto) {
+                UserDefaults.standard.set(cryptosEncoded, forKey: "cryptoList")
+            }
         }
     }
     
@@ -93,6 +97,16 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
         checkbox.tag = indexPath.row
         checkbox.addTarget(self, action: #selector(checkBoxClicked(_:)), for: .touchUpInside)
         
+        if let cryptos = UserDefaults.standard.data(forKey: "cryptoList") {
+            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptos) {
+                decodedList.forEach { crypto in
+                    if crypto.id == cryptoList[indexPath.row].id {
+                        checkbox.sendActions(for: .touchUpInside)
+                    }
+                }
+            }
+        }
+
         let imageView = UIImageView()
         imageView.kf.setImage(with: URL(string: filteredList[indexPath.row].image))
         imageView.frame = CGRect(x: 20, y: 10, width: 35, height: 35)

@@ -45,9 +45,9 @@ class CardStack: UIView {
         for _ in 0...2 {
             cardList.append(Card(delegate: buttonsHandlerDelegate!))
         }
-        cardList[0].setCityCard()
-        cardList[1].setWeatherCard()
-        cardList[2].setCryptoCard()
+        cardList[0].setupCityCard()
+        cardList[1].setupWeatherCard()
+        cardList[2].setupCryptoCard()
         if let savedOrder = UserDefaults.standard.array(forKey: "cardsOrder") as? [String] {
             reorder(newOrder: savedOrder)
         }

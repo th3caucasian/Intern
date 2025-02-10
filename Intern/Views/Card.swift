@@ -14,6 +14,7 @@ class Card: UIView {
     
     private var choice = false
     private var buttonsHandlerDelegate: ButtonsHandlerDelegate?
+    private var cryptoViewUpdater: Timer?
     
     convenience init(delegate: ButtonsHandlerDelegate) {
         self.init()
@@ -175,12 +176,12 @@ class Card: UIView {
         
     }
     
-    func setCityCard() {
+    func setupCityCard() {
         choiceButton.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
         settingsButton.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
         cardText.text = "Город"
         defaultImage.image = UIImage(named: "map_bckgrnd")
-        if let city = UserDefaults.standard.data(forKey: "cityWeather") {
+        if let city = UserDefaults.standard.data(forKey: "cityMap") {
             if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
                 setCity(latitude: decodedCity.latitude, longitude: decodedCity.longitude)
             }
@@ -188,7 +189,7 @@ class Card: UIView {
     }
     
     
-    func setWeatherCard() {
+    func setupWeatherCard() {
         choiceButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
         settingsButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
         cardText.text = "Погода"
@@ -202,11 +203,16 @@ class Card: UIView {
     }
     
     
-    func setCryptoCard() {
+    func setupCryptoCard() {
         choiceButton.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
         settingsButton.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
         cardText.text = "Курс криптовалют"
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
+        if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
+            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
+                setCrypto(cryptoList: decodedList)
+            }
+        }
     }
     
     
@@ -279,7 +285,7 @@ class Card: UIView {
     
     
     func setCrypto(cryptoList: [Crypto]) {
-        var cryptoViews: [CryptoView] = []
+        var cryptoViews: [CryptoView] = []  // можно оптимизировать за счет этой локальной переменной и проверять на равенство с новым листом
         if (cryptoList.isEmpty) {
             return
         }
@@ -287,13 +293,15 @@ class Card: UIView {
             choice = true
             choiceButton.isHidden = true
             defaultImage.isHidden = true
-            let leftSpacer: UIView = UIView()
-            let rightSpacer: UIView = UIView()
             placeholder.addSubview(horizontalStack)
             horizontalStack.edgesToSuperview()
-            horizontalStack.addArrangedSubview(leftSpacer)
-            horizontalStack.addArrangedSubview(rightSpacer)
         }
+        horizontalStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        let leftSpacer: UIView = UIView()
+        let rightSpacer: UIView = UIView()
+        horizontalStack.addArrangedSubview(leftSpacer)
+        horizontalStack.addArrangedSubview(rightSpacer)
+        
         for i in cryptoList.indices {
             cryptoViews.append(CryptoView())
             let crypto = cryptoList[i]
