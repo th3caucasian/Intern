@@ -84,8 +84,8 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         self.navigationController?.pushViewController(cryptoList, animated: true)
     }
     
-    func saveCity(latitude: Double, longitude: Double, city: String) {
-        cardStack.saveCity(latitude: latitude, longitude: longitude, type: lastDelegateUser!, city: city)
+    func saveCity(city: City) {
+        cardStack.saveCity(city: city, type: lastDelegateUser!)
     }
     
     func saveCryptoList(cryptoList: [Crypto]) {

@@ -118,6 +118,13 @@ class Card: UIView {
         return map
     }()
     
+    private let errorView: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .systemBlue.withAlphaComponent(0.2)
+        return button
+    }()
+    
     private let weatherView = WeatherView()
     
     
@@ -147,6 +154,7 @@ class Card: UIView {
         placeholder.widthToSuperview()
         placeholder.addSubview(defaultImage)
         placeholder.addSubview(choiceButton)
+        placeholder.addSubview(errorView)
 
         defaultImage.centerInSuperview()
         defaultImage.widthToSuperview(offset: -30)
@@ -162,6 +170,9 @@ class Card: UIView {
         sepLine.widthToSuperview()
         sepLine.heightToSuperview(multiplier: 0.005)
         
+        errorView.edgesToSuperview()
+        errorView.isHidden = true
+        
     }
     
     func setCityCard() {
@@ -169,7 +180,11 @@ class Card: UIView {
         settingsButton.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
         cardText.text = "Город"
         defaultImage.image = UIImage(named: "map_bckgrnd")
-        
+        if let city = UserDefaults.standard.data(forKey: "cityWeather") {
+            if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
+                setCity(latitude: decodedCity.latitude, longitude: decodedCity.longitude)
+            }
+        }
     }
     
     
@@ -179,6 +194,11 @@ class Card: UIView {
         cardText.text = "Погода"
         defaultImage.image = UIImage(named: "weather_bckgrnd")
         weatherView.setupView()
+        if let city = UserDefaults.standard.data(forKey: "cityWeather") {
+            if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
+                setWeather(latitude: decodedCity.latitude, longitude: decodedCity.longitude, name: decodedCity.name)
+            }
+        }
     }
     
     
@@ -222,7 +242,7 @@ class Card: UIView {
     
     
     
-    func setWeather(latitude: Double, longitude: Double, city: String) {
+    func setWeather(latitude: Double, longitude: Double, name: String) {
         if (choice == false) {
             choice = true
             choiceButton.isHidden = true
@@ -233,7 +253,7 @@ class Card: UIView {
         fetchWeather(latitude: latitude, longitude: longitude) { [weak self] weather in
             if let decodedWeather = weather {
                 self?.weatherView.fillData(
-                    city: city,
+                    city: name,
                     image: decodedWeather.weather[0].icon,
                     weather: decodedWeather.weather[0].description,
                     temperature: String(format: "%.1f", decodedWeather.main.temp) + "ºC",
@@ -249,6 +269,10 @@ class Card: UIView {
                 self?.defaultImage.isHidden = true
                 self?.placeholder.addSubview(self!.weatherView)
                 self?.weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
+            } else {
+                self?.errorView.isHidden = false
+                self?.weatherView.isHidden = true
+                self?.errorView.titleLabel?.text = "При загрузке погоды произошла ошибка"
             }
         }
     }
@@ -256,6 +280,9 @@ class Card: UIView {
     
     func setCrypto(cryptoList: [Crypto]) {
         var cryptoViews: [CryptoView] = []
+        if (cryptoList.isEmpty) {
+            return
+        }
         if (choice == false) {
             choice = true
             choiceButton.isHidden = true
@@ -293,7 +320,9 @@ class Card: UIView {
                 }
             case .failure(let error):
                 print("Ошибка сети \(error.localizedDescription)")
+                self.fetchWeather(latitude: latitude, longitude: longitude, completition: completition)
             }
         }
     }
+    
 }

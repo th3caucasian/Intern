@@ -59,6 +59,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     
     @objc func buttonSavePressed() {
         transmissionDelegate?.infoReceived(cardsOrder: cardList)
+        UserDefaults.standard.set(cardList, forKey: "cardsOrder")
         self.navigationController?.popViewController(animated: true)
     }
     

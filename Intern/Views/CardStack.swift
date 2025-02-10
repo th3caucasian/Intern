@@ -48,6 +48,9 @@ class CardStack: UIView {
         cardList[0].setCityCard()
         cardList[1].setWeatherCard()
         cardList[2].setCryptoCard()
+        if let savedOrder = UserDefaults.standard.array(forKey: "cardsOrder") as? [String] {
+            reorder(newOrder: savedOrder)
+        }
     }
     
     func reorder(newOrder: [String]) {
@@ -75,14 +78,20 @@ class CardStack: UIView {
         return tempList
     }
     
-    func saveCity(latitude: Double, longitude: Double, type: String, city: String) {
+    func saveCity(city: City, type: String) {
         switch type {
         case "map":
             let cityCard = cardList.first {$0.cardText.text! == "Город"}!
-            cityCard.setCity(latitude: latitude, longitude: longitude)
+            cityCard.setCity(latitude: city.latitude, longitude: city.longitude)
+            if let cityEncoded = try? JSONEncoder().encode(city) {
+                UserDefaults.standard.set(cityEncoded, forKey: "cityMap")
+            }
         case "weather":
             let weatherCard = cardList.first {$0.cardText.text! == "Погода"}!
-            weatherCard.setWeather(latitude: latitude, longitude: longitude, city: city)
+            weatherCard.setWeather(latitude: city.latitude, longitude: city.longitude, name: city.name)
+            if let cityEncoded = try? JSONEncoder().encode(city) {
+                UserDefaults.standard.set(cityEncoded, forKey: "cityWeather")
+            }
         default:
             fatalError("Неверный параметр был передан в функцию")
         }

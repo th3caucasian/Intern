@@ -9,7 +9,7 @@
 protocol TransmissionDelegate: AnyObject {
     func infoReceived(cardsOrder: [String])
     
-    func saveCity(latitude: Double, longitude: Double, city: String)
+    func saveCity(city: City)
     
     func saveCryptoList(cryptoList: [Crypto])
 }

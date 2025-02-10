@@ -51,7 +51,7 @@ class CitiesListController: ListViewController {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedItem = citiesList[indexPath.row]
-        transmissionDelegate?.saveCity(latitude: selectedItem.latitude, longitude: selectedItem.longitude, city: selectedItem.name)
+        transmissionDelegate?.saveCity(city: selectedItem)
         self.navigationController?.popViewController(animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
