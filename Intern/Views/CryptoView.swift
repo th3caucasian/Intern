@@ -61,6 +61,7 @@ class CryptoView: UIView {
     }()
     
     func fillData(cryptoName: String, cryptoImage: String, cryptoPrice: String, priceDynamic: String) {
+        
         self.cryptoName.text = cryptoName
         self.cryptoImage.kf.setImage(with: URL(string: cryptoImage))
         self.cryptoPrice.text = cryptoPrice

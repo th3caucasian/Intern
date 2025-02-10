@@ -13,6 +13,7 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
     
     private var cardStack: CardStack!
     private var lastDelegateUser: String?
+    private var cryptoTimer: Timer?
 
 
     override func viewDidLoad() {
@@ -24,9 +25,9 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         cardStack.buttonsHandlerDelegate = self
         cardStack.networkDelegate = self
         view.addSubview(cardStack)
-        cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 30, left: 0, bottom: 30, right: 0), usingSafeArea: true)
+        cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 20, left: 0, bottom: 20, right: 0), usingSafeArea: true)
         cardStack.setupView()
-        
+        startTimer()
 
     }
     
@@ -88,7 +89,8 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
     
     func reloadCryptoPressed(cryptoList: [Crypto]) {
         fetchCrypto { cryptos in
-            let tempList = cryptos?.filter { cryptoList.contains($0) }
+            let cryptoListIds = Set(cryptoList.map { $0.id.lowercased() })
+            let tempList = cryptos?.filter { cryptoListIds.contains($0.id) }
             self.cardStack.saveCryptoList(cryptoList: tempList)
         }
     }
@@ -97,7 +99,13 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         cardStack.saveCity(city: city, type: lastDelegateUser!)
     }
     
-    func saveCryptoList(cryptoList: [Crypto]) {
+    func saveCryptoList(cryptoList: [Crypto]?) {
+        if (cryptoList != nil) && (cryptoList!.isEmpty == false) {
+            startTimer()
+        } else {
+            cryptoTimer?.invalidate()
+            cryptoTimer = nil
+        }
         cardStack.saveCryptoList(cryptoList: cryptoList)
     }
     
@@ -114,7 +122,24 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
                     print("Ошибка парсинга \(error)")
                 }
             case .failure(let error):
+                //self.cardStack.saveCryptoList(cryptoList: nil)
                 print("Ошибка сети \(error.localizedDescription)")
+                completition(nil)
+            }
+        }
+    }
+    
+    func startTimer() {
+        cryptoTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(reloadCryptoByTimer), userInfo: nil, repeats: true)
+    }
+    
+    @objc func reloadCryptoByTimer() {
+        if let list = UserDefaults.standard.data(forKey: "cryptoList") {
+            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: list) {
+//                fetchCrypto { cryptos in
+//                    let tempList = cryptos?.filter { decodedList.contains($0) }
+//                    self.cardStack.saveCryptoList(cryptoList: tempList)
+//                }
             }
         }
     }

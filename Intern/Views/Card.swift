@@ -15,7 +15,6 @@ class Card: UIView {
     private var choice = false
     private weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
     private weak var networkDelegate: NetworkDelegate?
-    private var cryptoViewUpdater: Timer?
     
     convenience init(buttonsHandlerDelegate: ButtonsHandlerDelegate, networkDelegate: NetworkDelegate) {
         self.init()
@@ -145,12 +144,11 @@ class Card: UIView {
         return stack
     }()
     
-    private let loadingView: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Загрузка..."
-        label.textAlignment = .center
-        return label
+    private let loadingView: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
+        return indicator
     }()
 
     func setupView() {
@@ -224,7 +222,7 @@ class Card: UIView {
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
         if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
-                setCrypto(cryptos: decodedList)
+                buttonsHandlerDelegate?.reloadCryptoPressed(cryptoList: decodedList)
             }
         }
     }
@@ -269,10 +267,9 @@ class Card: UIView {
             defaultImage.isHidden = true
             placeholder.addSubview(weatherView)
             placeholder.addSubview(loadingView)
-            loadingView.edgesToSuperview()
+            loadingView.centerInSuperview()
             weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         }
- 
         fetchWeather(latitude: latitude, longitude: longitude) { [weak self] weather in
             if let decodedWeather = weather {
                 self?.weatherView.fillData(
@@ -287,12 +284,11 @@ class Card: UIView {
                     humidity: String(decodedWeather.main.humidity),
                     cloudness: String(decodedWeather.clouds.all),
                     visibility: String(decodedWeather.visibility / 1000))
-                
+                self?.loadingView.stopAnimating()
                 self?.choiceButton.isHidden = true
                 self?.defaultImage.isHidden = true
                 self?.errorView.isHidden = true
                 self?.weatherView.isHidden = false
-                self?.loadingView.isHidden = true
             } else {
                 self?.loadingView.isHidden = true
                 self?.errorView.isHidden = false
@@ -318,10 +314,12 @@ class Card: UIView {
                 choice = false
                 choiceButton.isHidden = false
                 defaultImage.isHidden = false
-                horizontalStack.removeFromSuperview()
+                errorView.isHidden = true
+                horizontalStack.isHidden = true
                 return
             }
             self.errorView.isHidden = true
+            self.horizontalStack.isHidden = false
             horizontalStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
             let leftSpacer: UIView = UIView()
             let rightSpacer: UIView = UIView()
@@ -340,8 +338,8 @@ class Card: UIView {
         } else {
             choiceButton.isHidden = true
             defaultImage.isHidden = true
+            self.horizontalStack.isHidden = true
             self.errorView.isHidden = false
-            self.horizontalStack.removeFromSuperview()
             self.errorView.addTarget(self, action: #selector(reloadCrypto), for: .touchUpInside)
             self.errorView.setTitle("При загрузке произошла ошибка", for: .normal)
         }
@@ -352,6 +350,8 @@ class Card: UIView {
         let moyaProvider = MoyaProvider<WeatherAPI>()
         weatherView.isHidden = true
         loadingView.isHidden = false
+        errorView.isHidden = true
+        loadingView.startAnimating()
         moyaProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { result in
             switch result {
             case .success(let response):

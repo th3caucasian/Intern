@@ -16,6 +16,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     var selectedCrypto: [Crypto] = []
     weak var transmissionDelegate: TransmissionDelegate?
     weak var networkDelegate: NetworkDelegate?
+    private var networkError = false
     
     
     override func viewDidLoad() {
@@ -26,12 +27,18 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     
     override func setupList() {
         networkDelegate?.fetchCrypto { [weak self] cryptos in
-            self!.cryptoList = cryptos!
-            for i in self!.cryptoList.indices {
-                self!.cryptoList[i].id = self!.cryptoList[i].id.prefix(1).uppercased() + self!.cryptoList[i].id.dropFirst()
+            if cryptos == nil {
+                self!.networkError = true
+                self!.transmissionDelegate?.saveCryptoList(cryptoList: nil)
+            } else {
+                self!.cryptoList = cryptos!    // выбрасывает ошибку когда нет интернета
+                for i in self!.cryptoList.indices {
+                    self!.cryptoList[i].id = self!.cryptoList[i].id.prefix(1).uppercased() + self!.cryptoList[i].id.dropFirst()
+                }
+                self!.filteredList = self!.cryptoList
+                self!.tableView.reloadData()
             }
-            self!.filteredList = self!.cryptoList
-            self!.tableView.reloadData()
+
         }
         self.title = "Выбор криптовалюты"
     }
@@ -51,7 +58,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        if self.isMovingFromParent {
+        if self.isMovingFromParent && !networkError {
             transmissionDelegate?.saveCryptoList(cryptoList: selectedCrypto)
             if let cryptosEncoded = try? JSONEncoder().encode(selectedCrypto) {
                 UserDefaults.standard.set(cryptosEncoded, forKey: "cryptoList")

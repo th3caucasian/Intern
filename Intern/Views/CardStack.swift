@@ -26,7 +26,7 @@ class CardStack: UIView {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fillEqually
-        stack.spacing = 50
+        stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -35,7 +35,6 @@ class CardStack: UIView {
         initList()
         self.addSubview(cardStack)
         cardStack.edgesToSuperview()
-        cardStack.centerInSuperview()
         cardList.forEach {
             cardStack.addArrangedSubview($0)
             $0.setupView()

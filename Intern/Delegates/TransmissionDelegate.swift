@@ -11,5 +11,5 @@ protocol TransmissionDelegate: AnyObject {
     
     func saveCity(city: City)
     
-    func saveCryptoList(cryptoList: [Crypto])
+    func saveCryptoList(cryptoList: [Crypto]?)
 }
