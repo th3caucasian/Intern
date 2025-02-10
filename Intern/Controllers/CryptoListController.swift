@@ -74,7 +74,8 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        cell.textLabel?.text = navigationItem.searchController != nil ? filteredList[indexPath.row].id : cryptoList[indexPath.row].id
+        let currentList = navigationItem.searchController != nil ? filteredList : cryptoList
+        cell.textLabel?.text = currentList[indexPath.row].id
         cell.textLabel?.leftToSuperview(offset: 65)
         cell.textLabel?.heightToSuperview()
         
@@ -87,11 +88,12 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
         checkbox.image(for: .selected)?.withTintColor(.systemBlue)
         checkbox.tag = indexPath.row
         checkbox.addTarget(self, action: #selector(checkBoxClicked(_:)), for: .touchUpInside)
+ 
         
         if let cryptos = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptos) {
                 decodedList.forEach { crypto in
-                    if crypto.id == cryptoList[indexPath.row].id {
+                    if crypto.id == currentList[indexPath.row].id {
                         checkbox.sendActions(for: .touchUpInside)
                     }
                 }

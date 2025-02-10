@@ -21,6 +21,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.layer.cornerRadius = 10
         tableView.clipsToBounds = true
+        tableView.isScrollEnabled = false
         return tableView
     }()
     
@@ -51,7 +52,8 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
         wrapperView.addSubview(tableView)
         tableView.edgesToSuperview()
         view.addSubview(wrapperView)
-        wrapperView.edgesToSuperview(insets: TinyEdgeInsets(top: 30, left: 20, bottom: 545, right: 20), usingSafeArea: true)
+        wrapperView.height(165)
+        wrapperView.edgesToSuperview(excluding: .bottom, insets: TinyEdgeInsets(top: 30, left: 20, bottom: 490, right: 20), usingSafeArea: true)
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Готово", style: .plain, target: self, action: #selector(buttonSavePressed))
     }
 
