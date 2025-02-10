@@ -9,4 +9,6 @@ protocol ButtonsHandlerDelegate: AnyObject {
     func cityChoicePressed(type: String)
     
     func cryptoChoicePressed()
+    
+    func reloadCryptoPressed(cryptoList: [Crypto])
 }

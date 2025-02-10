@@ -13,12 +13,14 @@ import Moya
 class Card: UIView {
     
     private var choice = false
-    private var buttonsHandlerDelegate: ButtonsHandlerDelegate?
+    private weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
+    private weak var networkDelegate: NetworkDelegate?
     private var cryptoViewUpdater: Timer?
     
-    convenience init(delegate: ButtonsHandlerDelegate) {
+    convenience init(buttonsHandlerDelegate: ButtonsHandlerDelegate, networkDelegate: NetworkDelegate) {
         self.init()
-        buttonsHandlerDelegate = delegate
+        self.buttonsHandlerDelegate = buttonsHandlerDelegate
+        self.networkDelegate = networkDelegate
     }
     
     override init(frame: CGRect) {
@@ -142,6 +144,14 @@ class Card: UIView {
         stack.spacing = 8
         return stack
     }()
+    
+    private let loadingView: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Загрузка..."
+        label.textAlignment = .center
+        return label
+    }()
 
     func setupView() {
         self.addSubview(verticalStack)
@@ -214,7 +224,7 @@ class Card: UIView {
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
         if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
-                setCrypto(cryptoList: decodedList)
+                setCrypto(cryptos: decodedList)
             }
         }
     }
@@ -258,8 +268,11 @@ class Card: UIView {
             choiceButton.isHidden = true
             defaultImage.isHidden = true
             placeholder.addSubview(weatherView)
+            placeholder.addSubview(loadingView)
+            loadingView.edgesToSuperview()
             weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         }
+ 
         fetchWeather(latitude: latitude, longitude: longitude) { [weak self] weather in
             if let decodedWeather = weather {
                 self?.weatherView.fillData(
@@ -278,11 +291,12 @@ class Card: UIView {
                 self?.choiceButton.isHidden = true
                 self?.defaultImage.isHidden = true
                 self?.errorView.isHidden = true
-                self?.placeholder.addSubview(self!.weatherView)
-                self?.weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
+                self?.weatherView.isHidden = false
+                self?.loadingView.isHidden = true
             } else {
+                self?.loadingView.isHidden = true
                 self?.errorView.isHidden = false
-                self?.weatherView.removeFromSuperview()
+                self?.weatherView.isHidden = true
                 self?.errorView.addTarget(self, action: #selector(self?.reloadWeather), for: .touchUpInside)
                 self?.errorView.setTitle("При загрузке погоды произошла ошибка", for: .normal)
             }
@@ -290,11 +304,8 @@ class Card: UIView {
     }
     
     
-    func setCrypto(cryptoList: [Crypto]) {
+    func setCrypto(cryptos: [Crypto]?) {
         var cryptoViews: [CryptoView] = []  // можно оптимизировать за счет этой локальной переменной и проверять на равенство с новым листом
-        if (cryptoList.isEmpty) {
-            return
-        }
         if (choice == false) {
             choice = true
             choiceButton.isHidden = true
@@ -302,27 +313,45 @@ class Card: UIView {
             placeholder.addSubview(horizontalStack)
             horizontalStack.edgesToSuperview()
         }
-        horizontalStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        let leftSpacer: UIView = UIView()
-        let rightSpacer: UIView = UIView()
-        horizontalStack.addArrangedSubview(leftSpacer)
-        horizontalStack.addArrangedSubview(rightSpacer)
-        
-        for i in cryptoList.indices {
-            cryptoViews.append(CryptoView())
-            let crypto = cryptoList[i]
-            let dynamic = crypto.current_price / 100 * crypto.price_change_percentage_1h_in_currency
-            cryptoViews[i].fillData(cryptoName: crypto.id, cryptoImage: crypto.image, cryptoPrice: String(crypto.current_price) + " $", priceDynamic: String(format: "%.4f", dynamic))
-            horizontalStack.insertArrangedSubview(cryptoViews[i], at: horizontalStack.arrangedSubviews.count - 1)
-            cryptoViews[i].widthToSuperview(multiplier: 0.3)
-            cryptoViews[i].heightToSuperview(multiplier: 0.9)
+        if let cryptoList = cryptos {
+            if (cryptoList.isEmpty) {
+                choice = false
+                choiceButton.isHidden = false
+                defaultImage.isHidden = false
+                horizontalStack.removeFromSuperview()
+                return
+            }
+            self.errorView.isHidden = true
+            horizontalStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+            let leftSpacer: UIView = UIView()
+            let rightSpacer: UIView = UIView()
+            horizontalStack.addArrangedSubview(leftSpacer)
+            horizontalStack.addArrangedSubview(rightSpacer)
+            
+            for i in cryptoList.indices {
+                cryptoViews.append(CryptoView())
+                let crypto = cryptoList[i]
+                let dynamic = crypto.current_price / 100 * crypto.price_change_percentage_1h_in_currency
+                cryptoViews[i].fillData(cryptoName: crypto.id, cryptoImage: crypto.image, cryptoPrice: String(crypto.current_price) + " $", priceDynamic: String(format: "%.4f", dynamic))
+                horizontalStack.insertArrangedSubview(cryptoViews[i], at: horizontalStack.arrangedSubviews.count - 1)
+                cryptoViews[i].widthToSuperview(multiplier: 0.3)
+                cryptoViews[i].heightToSuperview(multiplier: 0.9)
+            }
+        } else {
+            choiceButton.isHidden = true
+            defaultImage.isHidden = true
+            self.errorView.isHidden = false
+            self.horizontalStack.removeFromSuperview()
+            self.errorView.addTarget(self, action: #selector(reloadCrypto), for: .touchUpInside)
+            self.errorView.setTitle("При загрузке произошла ошибка", for: .normal)
         }
     }
     
     
     private func fetchWeather(latitude: Double, longitude: Double, completition: @escaping (WeatherModel?)->(Void)) {
         let moyaProvider = MoyaProvider<WeatherAPI>()
-        
+        weatherView.isHidden = true
+        loadingView.isHidden = false
         moyaProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { result in
             switch result {
             case .success(let response):
@@ -343,7 +372,7 @@ class Card: UIView {
     @objc func reloadWeather() {
         if let city = UserDefaults.standard.data(forKey: "cityWeather") {
             if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
-                    setWeather(latitude: decodedCity.latitude, longitude: decodedCity.longitude, name: decodedCity.name)
+                setWeather(latitude: decodedCity.latitude, longitude: decodedCity.longitude, name: decodedCity.name)
             }
         }
     }
@@ -351,10 +380,9 @@ class Card: UIView {
     @objc func reloadCrypto() {
         if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedCryptos = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
-                setCrypto(cryptoList: decodedCryptos)
+                buttonsHandlerDelegate?.reloadCryptoPressed(cryptoList: decodedCryptos)
             }
         }
     }
-    
     
 }

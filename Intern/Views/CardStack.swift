@@ -12,6 +12,7 @@ class CardStack: UIView {
     
     private var cardList: [Card] = []
     weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
+    weak var networkDelegate: NetworkDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,7 +44,7 @@ class CardStack: UIView {
     
     private func initList() {
         for _ in 0...2 {
-            cardList.append(Card(delegate: buttonsHandlerDelegate!))
+            cardList.append(Card(buttonsHandlerDelegate: buttonsHandlerDelegate!, networkDelegate: networkDelegate!))
         }
         cardList[0].setupCityCard()
         cardList[1].setupWeatherCard()
@@ -97,8 +98,8 @@ class CardStack: UIView {
         }
     }
     
-    func saveCryptoList(cryptoList: [Crypto]) {
+    func saveCryptoList(cryptoList: [Crypto]?) {
         let cryptoView = cardList.first {$0.cardText.text! == "Курс криптовалют"}!
-        cryptoView.setCrypto(cryptoList: cryptoList)
+        cryptoView.setCrypto(cryptos: cryptoList)
     }
 }

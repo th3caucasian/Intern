@@ -15,6 +15,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     private var filteredList: [Crypto] = []
     var selectedCrypto: [Crypto] = []
     weak var transmissionDelegate: TransmissionDelegate?
+    weak var networkDelegate: NetworkDelegate?
     
     
     override func viewDidLoad() {
@@ -24,7 +25,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     }
     
     override func setupList() {
-        fetchCrypto { [weak self] cryptos in
+        networkDelegate?.fetchCrypto { [weak self] cryptos in
             self!.cryptoList = cryptos!
             for i in self!.cryptoList.indices {
                 self!.cryptoList[i].id = self!.cryptoList[i].id.prefix(1).uppercased() + self!.cryptoList[i].id.dropFirst()
@@ -46,23 +47,6 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
         tableView.reloadData()
     }
     
-    func fetchCrypto(completition: @escaping ([Crypto]?)->(Void)) {
-        let moyaProvider = MoyaProvider<CryptoAPI>()
-        
-        moyaProvider.request(.getCryptoList) { result in
-            switch result {
-            case .success(let response):
-                do {
-                    let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
-                    completition(decoded)
-                } catch {
-                    print("Ошибка парсинга \(error)")
-                }
-            case .failure(let error):
-                print("Ошибка сети \(error.localizedDescription)")
-            }
-        }
-    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)

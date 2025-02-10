@@ -9,7 +9,7 @@ import UIKit
 import TinyConstraints
 import Moya
 
-class MainViewController: UIViewController, ButtonsHandlerDelegate, TransmissionDelegate {
+class MainViewController: UIViewController, ButtonsHandlerDelegate, TransmissionDelegate, NetworkDelegate {
     
     private var cardStack: CardStack!
     private var lastDelegateUser: String?
@@ -22,6 +22,7 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         
         cardStack = CardStack(frame: UIScreen.main.bounds)
         cardStack.buttonsHandlerDelegate = self
+        cardStack.networkDelegate = self
         view.addSubview(cardStack)
         cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 30, left: 0, bottom: 30, right: 0), usingSafeArea: true)
         cardStack.setupView()
@@ -81,7 +82,15 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
     func cryptoChoicePressed() {
         let cryptoList = CryptoListController()
         cryptoList.transmissionDelegate = self
+        cryptoList.networkDelegate = self
         self.navigationController?.pushViewController(cryptoList, animated: true)
+    }
+    
+    func reloadCryptoPressed(cryptoList: [Crypto]) {
+        fetchCrypto { cryptos in
+            let tempList = cryptos?.filter { cryptoList.contains($0) }
+            self.cardStack.saveCryptoList(cryptoList: tempList)
+        }
     }
     
     func saveCity(city: City) {
@@ -90,6 +99,24 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
     
     func saveCryptoList(cryptoList: [Crypto]) {
         cardStack.saveCryptoList(cryptoList: cryptoList)
+    }
+    
+    func fetchCrypto(completition: @escaping ([Crypto]?)->(Void)) {
+        let moyaProvider = MoyaProvider<CryptoAPI>()
+        
+        moyaProvider.request(.getCryptoList) { result in
+            switch result {
+            case .success(let response):
+                do {
+                    let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
+                    completition(decoded)
+                } catch {
+                    print("Ошибка парсинга \(error)")
+                }
+            case .failure(let error):
+                print("Ошибка сети \(error.localizedDescription)")
+            }
+        }
     }
 }
 
