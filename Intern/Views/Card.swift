@@ -123,6 +123,10 @@ class Card: UIView {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .systemBlue.withAlphaComponent(0.2)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.layer.cornerRadius = 20
+        button.titleLabel?.numberOfLines = 2
+        button.titleLabel?.textAlignment = .center
         return button
     }()
     
@@ -171,7 +175,7 @@ class Card: UIView {
         sepLine.widthToSuperview()
         sepLine.heightToSuperview(multiplier: 0.005)
         
-        errorView.edgesToSuperview()
+        errorView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         errorView.isHidden = true
         
     }
@@ -273,12 +277,14 @@ class Card: UIView {
                 
                 self?.choiceButton.isHidden = true
                 self?.defaultImage.isHidden = true
+                self?.errorView.isHidden = true
                 self?.placeholder.addSubview(self!.weatherView)
                 self?.weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
             } else {
                 self?.errorView.isHidden = false
-                self?.weatherView.isHidden = true
-                self?.errorView.titleLabel?.text = "При загрузке погоды произошла ошибка"
+                self?.weatherView.removeFromSuperview()
+                self?.errorView.addTarget(self, action: #selector(self?.reloadWeather), for: .touchUpInside)
+                self?.errorView.setTitle("При загрузке погоды произошла ошибка", for: .normal)
             }
         }
     }
@@ -307,7 +313,7 @@ class Card: UIView {
             let crypto = cryptoList[i]
             let dynamic = crypto.current_price / 100 * crypto.price_change_percentage_1h_in_currency
             cryptoViews[i].fillData(cryptoName: crypto.id, cryptoImage: crypto.image, cryptoPrice: String(crypto.current_price) + " $", priceDynamic: String(format: "%.4f", dynamic))
-            horizontalStack.insertArrangedSubview(cryptoViews[i], at: horizontalStack.subviews.count - 1)
+            horizontalStack.insertArrangedSubview(cryptoViews[i], at: horizontalStack.arrangedSubviews.count - 1)
             cryptoViews[i].widthToSuperview(multiplier: 0.3)
             cryptoViews[i].heightToSuperview(multiplier: 0.9)
         }
@@ -328,9 +334,27 @@ class Card: UIView {
                 }
             case .failure(let error):
                 print("Ошибка сети \(error.localizedDescription)")
-                self.fetchWeather(latitude: latitude, longitude: longitude, completition: completition)
+                completition(nil)
             }
         }
     }
+    
+
+    @objc func reloadWeather() {
+        if let city = UserDefaults.standard.data(forKey: "cityWeather") {
+            if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
+                    setWeather(latitude: decodedCity.latitude, longitude: decodedCity.longitude, name: decodedCity.name)
+            }
+        }
+    }
+    
+    @objc func reloadCrypto() {
+        if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
+            if let decodedCryptos = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
+                setCrypto(cryptoList: decodedCryptos)
+            }
+        }
+    }
+    
     
 }
