@@ -139,7 +139,7 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
     @objc func reloadCryptoByTimer() {
         if let list = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: list) {
-                //reloadCryptoPressed(cryptoList: decodedList)
+                reloadCryptoPressed(cryptoList: decodedList)
             }
         }
     }
