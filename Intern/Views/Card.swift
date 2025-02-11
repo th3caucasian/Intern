@@ -220,8 +220,15 @@ class Card: UIView {
         settingsButton.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
         cardText.text = "Курс криптовалют"
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
+        placeholder.addSubview(loadingView)
+        loadingView.centerInSuperview()
+        loadingView.isHidden = true
         if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
+                loadingView.isHidden = false
+                defaultImage.isHidden = true
+                choiceButton.isHidden = true
+                loadingView.startAnimating()
                 buttonsHandlerDelegate?.reloadCryptoPressed(cryptoList: decodedList)
             }
         }
@@ -304,12 +311,13 @@ class Card: UIView {
         var cryptoViews: [CryptoView] = []  // можно оптимизировать за счет этой локальной переменной и проверять на равенство с новым листом
         if (choice == false) {
             choice = true
+            loadingView.stopAnimating()
             choiceButton.isHidden = true
             defaultImage.isHidden = true
             placeholder.addSubview(horizontalStack)
             horizontalStack.edgesToSuperview()
         }
-        if let cryptoList = cryptos {
+        if var cryptoList = cryptos {
             if (cryptoList.isEmpty) {
                 choice = false
                 choiceButton.isHidden = false
@@ -318,6 +326,7 @@ class Card: UIView {
                 horizontalStack.isHidden = true
                 return
             }
+            cryptoList = cryptoList.sorted { $0.id < $1.id }
             self.errorView.isHidden = true
             self.horizontalStack.isHidden = false
             horizontalStack.arrangedSubviews.forEach { $0.removeFromSuperview() }

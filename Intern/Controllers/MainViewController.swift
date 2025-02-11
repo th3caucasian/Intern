@@ -28,7 +28,6 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 20, left: 0, bottom: 20, right: 0), usingSafeArea: true)
         cardStack.setupView()
         startTimer()
-
     }
     
     private func setupNavigationBar() {
@@ -127,7 +126,6 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
                     print("Ошибка парсинга \(error)")
                 }
             case .failure(let error):
-                //self.cardStack.saveCryptoList(cryptoList: nil)
                 print("Ошибка сети \(error.localizedDescription)")
                 completition(nil)
             }
@@ -141,10 +139,7 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
     @objc func reloadCryptoByTimer() {
         if let list = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: list) {
-//                fetchCrypto { cryptos in
-//                    let tempList = cryptos?.filter { decodedList.contains($0) }
-//                    self.cardStack.saveCryptoList(cryptoList: tempList)
-//                }
+                //reloadCryptoPressed(cryptoList: decodedList)
             }
         }
     }

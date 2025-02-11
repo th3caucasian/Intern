@@ -101,4 +101,5 @@ class CardStack: UIView {
         let cryptoView = cardList.first {$0.cardText.text! == "Курс криптовалют"}!
         cryptoView.setCrypto(cryptos: cryptoList)
     }
+    
 }
