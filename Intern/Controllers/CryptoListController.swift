@@ -25,7 +25,7 @@
         }
         
         override func setupList() {
-            networkDelegate?.fetchCrypto { [weak self] cryptos in
+            networkDelegate?.fetchCrypto(queryType: .all, selectedCrypto: nil) { [weak self] cryptos in
                 if cryptos == nil {
                     self!.networkError = true
                     self!.transmissionDelegate?.saveCryptoList(cryptoList: nil)

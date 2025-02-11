@@ -10,7 +10,7 @@ protocol ButtonsHandlerDelegate: AnyObject {
     
     func cryptoChoicePressed()
     
-    func reloadCryptoPressed(cryptoList: [Crypto])
+    func reloadCryptoPressed(cryptoList: [Crypto]?)
     
     func reloadWeatherPressed(weather: WeatherModel)
 }

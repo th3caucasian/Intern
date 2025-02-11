@@ -13,6 +13,11 @@ enum DelegateUser {
     case map, weather
 }
 
+enum CryptoQueryType {
+    case all, selected
+}
+
+
 class MainViewController: UIViewController {
     
     private var cardStack: CardStack!
@@ -151,16 +156,23 @@ extension MainViewController: ButtonsHandlerDelegate {
         self.navigationController?.pushViewController(cryptoList, animated: true)
     }
     
-    func reloadCryptoPressed(cryptoList: [Crypto]) {
-        fetchCrypto { cryptos in
-            let cryptoListIds = Set(cryptoList.map { $0.id.lowercased() })
-            let tempList = cryptos?.filter { cryptoListIds.contains($0.id) }
-            let updatedTemp = tempList?.map { crypto in
+    func reloadCryptoPressed(cryptoList: [Crypto]?) {
+        if cryptoList == nil || cryptoList!.isEmpty {
+            cardStack.saveCryptoList(cryptoList: [])
+            return
+        }
+        
+        var names: String? = ""
+        cryptoList?.forEach {
+            names? += "\($0.id.lowercased()),"
+        }
+        fetchCrypto(queryType: .selected, selectedCrypto: names) { cryptos in
+            let uppercasedCrypto = cryptos?.map { crypto in
                 var modifiedCrypto = crypto
                 modifiedCrypto.id = crypto.id.prefix(1).uppercased() + crypto.id.dropFirst()
                 return modifiedCrypto
             }
-            self.cardStack.saveCryptoList(cryptoList: updatedTemp)
+            self.cardStack.saveCryptoList(cryptoList: uppercasedCrypto)
         }
     }
     
@@ -179,29 +191,50 @@ extension MainViewController: ButtonsHandlerDelegate {
 
 extension MainViewController: NetworkDelegate {
 
-    
-    func fetchCrypto(completition: @escaping ([Crypto]?)->(Void)) {
+
+    func fetchCrypto(queryType: CryptoQueryType, selectedCrypto: String?, completition: @escaping ([Crypto]?)->(Void)) {
         let moyaProvider = MoyaProvider<CryptoAPI>()
         
-        moyaProvider.request(.getCryptoList) { result in
-            switch result {
-            case .success(let response):
-                do {
-                    let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
-                    completition(decoded)
-                } catch {
-                    print("Ошибка парсинга \(error)")
+        switch queryType {
+        case .all:
+            moyaProvider.request(.getAllCrypto) { result in
+                switch result {
+                case .success(let response):
+                    do {
+                        let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
+                        completition(decoded)
+                    } catch {
+                        print("Ошибка парсинга \(error)")
+                    }
+                case .failure(let error):
+                    print("Ошибка сети \(error.localizedDescription)")
+                    completition(nil)
                 }
-            case .failure(let error):
-                print("Ошибка сети \(error.localizedDescription)")
-                completition(nil)
             }
+            
+        case .selected:
+            moyaProvider.request(.getSelectedCrypto(selectedCrypto!)) { result in
+                switch result {
+                case .success(let response):
+                    do {
+                        let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
+                        completition(decoded)
+                    } catch {
+                        print("Ошибка парсинга \(error)")
+                    }
+                case .failure(let error):
+                    print("Ошибка сети \(error.localizedDescription)")
+                    completition(nil)
+                }
+            }
+            
         }
     }
     
     
     func fetchWeather(latitude: Double, longitude: Double, completition: @escaping (WeatherModel?) -> (Void)) {
         let moyaProvider = MoyaProvider<WeatherAPI>()
+        
         moyaProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { result in
             switch result {
             case .success(let response):
