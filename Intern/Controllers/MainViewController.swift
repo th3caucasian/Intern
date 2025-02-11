@@ -91,7 +91,12 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         fetchCrypto { cryptos in
             let cryptoListIds = Set(cryptoList.map { $0.id.lowercased() })
             let tempList = cryptos?.filter { cryptoListIds.contains($0.id) }
-            self.cardStack.saveCryptoList(cryptoList: tempList)
+            let updatedTemp = tempList?.map { crypto in
+                var modifiedCrypto = crypto
+                modifiedCrypto.id = crypto.id.prefix(1).uppercased() + crypto.id.dropFirst()
+                return modifiedCrypto
+            }
+            self.cardStack.saveCryptoList(cryptoList: updatedTemp)
         }
     }
     
