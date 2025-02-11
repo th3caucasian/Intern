@@ -17,7 +17,7 @@ enum CryptoQueryType {
     case all, selected
 }
 
-
+// Контроллер главного экрана с карточками
 class MainViewController: UIViewController {
     
     private var cardStack: CardStack!

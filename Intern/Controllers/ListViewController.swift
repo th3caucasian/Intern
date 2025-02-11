@@ -8,6 +8,7 @@
 import UIKit
 import TinyConstraints
 
+// Общий контроллер для спика городов и криптовалют (Родительский класс)
 class ListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchResultsUpdating {
     
     private let rowHeight: CGFloat = 55

@@ -7,6 +7,7 @@
 
 import Moya
 
+// АПИ для получения данных о погоде
 enum WeatherAPI: TargetType {
     case getWeather(latitude: Double, longitude: Double)
     

@@ -7,6 +7,7 @@
 
 import Moya
 
+// АПИ для получения данных о криптовалюте
 enum CryptoAPI: TargetType {
     case getAllCrypto, getSelectedCrypto(String)
     

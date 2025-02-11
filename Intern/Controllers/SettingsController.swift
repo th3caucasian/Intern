@@ -8,7 +8,7 @@
 import UIKit
 import TinyConstraints
 
-
+// Контроллер экрана настроек (перестановка карточек)
 class SettingsController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     weak var transmissionDelegate: TransmissionDelegate?

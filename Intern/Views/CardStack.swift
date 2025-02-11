@@ -41,6 +41,7 @@ class CardStack: UIView {
         }
     }
     
+    // настройка вью карт
     private func initList() {
         for _ in 0...2 {
             cardList.append(Card(buttonsHandlerDelegate: buttonsHandlerDelegate!, networkDelegate: networkDelegate!))

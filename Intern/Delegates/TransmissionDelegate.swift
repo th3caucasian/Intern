@@ -7,9 +7,13 @@
 
 
 protocol TransmissionDelegate: AnyObject {
+    
+    // Метод сохранения порядка карточек
     func infoReceived(cardsOrder: [String])
     
+    // Метод сохранения города (и для карты и для погоды)
     func saveCity(city: City)
     
+    // Метод сохранения добавленных криптовалют
     func saveCryptoList(cryptoList: [Crypto]?)
 }

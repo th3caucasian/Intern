@@ -10,6 +10,7 @@ import TinyConstraints
 import MapKit
 import Moya
 
+// Вью одной карточки
 class Card: UIView {
     
     private var choice = false
@@ -256,7 +257,7 @@ class Card: UIView {
         buttonsHandlerDelegate?.cryptoChoicePressed()
     }
     
-    
+    // Вызывается при установке города карты
     func setCity(latitude: Double, longitude: Double) {
         if (choice == false) {
             choice = true
@@ -274,7 +275,7 @@ class Card: UIView {
     }
     
     
-    
+    // Вызывается при установке города для погоды
     func setWeather(weatherModel: WeatherModel?) {
         if (choice == false) {
             choice = true
@@ -310,7 +311,7 @@ class Card: UIView {
         }
     }
     
-    
+    // Вызывается при установке списка криптовалюты
     func setCrypto(cryptos: [Crypto]?) {
         var cryptoViews: [CryptoView] = []
         if (choice == false) {

@@ -7,6 +7,7 @@
 
 import UIKit
 
+// Контроллер списка городов
 class CitiesListController: ListViewController {
     
     private var citiesList: [City] = []
@@ -18,6 +19,7 @@ class CitiesListController: ListViewController {
         setupList()
     }
     
+    // Читаются данные из локального файла
     override func setupList() {
         citiesList = JSONReader().loadCitiesFromFile(fileName: "cities")
         filteredList = citiesList
