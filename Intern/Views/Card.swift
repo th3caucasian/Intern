@@ -193,7 +193,7 @@ class Card: UIView {
         settingsButton.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
         cardText.text = "Город"
         defaultImage.image = UIImage(named: "map_bckgrnd")
-        if let city = UserDefaults.standard.data(forKey: "cityMap") {
+        if let city = UserDefaults.standard.data(forKey: "city") {
             if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
                 setCity(latitude: decodedCity.latitude, longitude: decodedCity.longitude)
             }
@@ -207,9 +207,15 @@ class Card: UIView {
         cardText.text = "Погода"
         defaultImage.image = UIImage(named: "weather_bckgrnd")
         weatherView.setupView()
-        if let city = UserDefaults.standard.data(forKey: "cityWeather") {
-            if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
-                setWeather(latitude: decodedCity.latitude, longitude: decodedCity.longitude, name: decodedCity.name)
+        errorView.addTarget(self, action: #selector(reloadWeather), for: .touchUpInside)
+        errorView.setTitle("При загрузке погоды произошла ошибка", for: .normal)
+        if let weather = UserDefaults.standard.data(forKey: "weather") {
+            if let decodedWeather = try? JSONDecoder().decode(WeatherModel.self, from: weather) {
+                loadingView.isHidden = false
+                defaultImage.isHidden = true
+                choiceButton.isHidden = true
+                loadingView.startAnimating()
+                buttonsHandlerDelegate?.reloadWeatherPressed(weather: decodedWeather)
             }
         }
     }
@@ -223,6 +229,8 @@ class Card: UIView {
         placeholder.addSubview(loadingView)
         loadingView.centerInSuperview()
         loadingView.isHidden = true
+        errorView.addTarget(self, action: #selector(reloadCrypto), for: .touchUpInside)
+        errorView.setTitle("При загрузке произошла ошибка", for: .normal)
         if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
                 loadingView.isHidden = false
@@ -237,11 +245,11 @@ class Card: UIView {
     
     
     @objc func delegateCityChoicePressed() {
-        buttonsHandlerDelegate?.cityChoicePressed(type: "map")
+        buttonsHandlerDelegate?.cityChoicePressed(type: DelegateUser.map)
     }
     
     @objc func delegateWeatherPressed() {
-        buttonsHandlerDelegate?.cityChoicePressed(type: "weather")
+        buttonsHandlerDelegate?.cityChoicePressed(type: DelegateUser.weather)
     }
     
     @objc func delegateCryptoPressed() {
@@ -267,7 +275,7 @@ class Card: UIView {
     
     
     
-    func setWeather(latitude: Double, longitude: Double, name: String) {
+    func setWeather(weatherModel: WeatherModel?) {
         if (choice == false) {
             choice = true
             choiceButton.isHidden = true
@@ -277,38 +285,34 @@ class Card: UIView {
             loadingView.centerInSuperview()
             weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         }
-        fetchWeather(latitude: latitude, longitude: longitude) { [weak self] weather in
-            if let decodedWeather = weather {
-                self?.weatherView.fillData(
-                    city: name,
-                    image: decodedWeather.weather[0].icon,
-                    weather: decodedWeather.weather[0].description,
-                    temperature: String(format: "%.1f", decodedWeather.main.temp) + "ºC",
-                    feelsLike: String(format: "%.1f", decodedWeather.main.feels_like) + "ºC",
-                    wind: String(decodedWeather.wind.speed),
-                    windDegree: decodedWeather.wind.deg,
-                    pressure: String(decodedWeather.main.pressure),
-                    humidity: String(decodedWeather.main.humidity),
-                    cloudness: String(decodedWeather.clouds.all),
-                    visibility: String(decodedWeather.visibility / 1000))
-                self?.loadingView.stopAnimating()
-                self?.choiceButton.isHidden = true
-                self?.defaultImage.isHidden = true
-                self?.errorView.isHidden = true
-                self?.weatherView.isHidden = false
-            } else {
-                self?.loadingView.isHidden = true
-                self?.errorView.isHidden = false
-                self?.weatherView.isHidden = true
-                self?.errorView.addTarget(self, action: #selector(self?.reloadWeather), for: .touchUpInside)
-                self?.errorView.setTitle("При загрузке погоды произошла ошибка", for: .normal)
-            }
+        if let weather = weatherModel {
+            weatherView.fillData(
+                city: weather.name,
+                image: weather.weather[0].icon,
+                weather: weather.weather[0].description,
+                temperature: String(format: "%.1f", weather.main.temp) + "ºC",
+                feelsLike: String(format: "%.1f", weather.main.feels_like) + "ºC",
+                wind: String(weather.wind.speed),
+                windDegree: weather.wind.deg,
+                pressure: String(weather.main.pressure),
+                humidity: String(weather.main.humidity),
+                cloudness: String(weather.clouds.all),
+                visibility: String(weather.visibility / 1000))
+            loadingView.stopAnimating()
+            choiceButton.isHidden = true
+            defaultImage.isHidden = true
+            errorView.isHidden = true
+            weatherView.isHidden = false
+        } else {
+            loadingView.stopAnimating()
+            errorView.isHidden = false
+            weatherView.isHidden = true
         }
     }
     
     
     func setCrypto(cryptos: [Crypto]?) {
-        var cryptoViews: [CryptoView] = []  // можно оптимизировать за счет этой локальной переменной и проверять на равенство с новым листом
+        var cryptoViews: [CryptoView] = []
         if (choice == false) {
             choice = true
             loadingView.stopAnimating()
@@ -327,8 +331,8 @@ class Card: UIView {
                 return
             }
             cryptoList = cryptoList.sorted { $0.id < $1.id }
-            self.errorView.isHidden = true
-            self.horizontalStack.isHidden = false
+            errorView.isHidden = true
+            horizontalStack.isHidden = false
             horizontalStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
             let leftSpacer: UIView = UIView()
             let rightSpacer: UIView = UIView()
@@ -345,43 +349,22 @@ class Card: UIView {
                 cryptoViews[i].heightToSuperview(multiplier: 0.9)
             }
         } else {
+            loadingView.stopAnimating()
             choiceButton.isHidden = true
             defaultImage.isHidden = true
-            self.horizontalStack.isHidden = true
-            self.errorView.isHidden = false
-            self.errorView.addTarget(self, action: #selector(reloadCrypto), for: .touchUpInside)
-            self.errorView.setTitle("При загрузке произошла ошибка", for: .normal)
-        }
-    }
-    
-    
-    private func fetchWeather(latitude: Double, longitude: Double, completition: @escaping (WeatherModel?)->(Void)) {
-        let moyaProvider = MoyaProvider<WeatherAPI>()
-        weatherView.isHidden = true
-        loadingView.isHidden = false
-        errorView.isHidden = true
-        loadingView.startAnimating()
-        moyaProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { result in
-            switch result {
-            case .success(let response):
-                do {
-                    let decoded = try JSONDecoder().decode(WeatherModel.self, from: response.data)
-                    completition(decoded)
-                } catch {
-                    print("Ошибка парсинга \(error)")
-                }
-            case .failure(let error):
-                print("Ошибка сети \(error.localizedDescription)")
-                completition(nil)
-            }
+            horizontalStack.isHidden = true
+            errorView.isHidden = false
         }
     }
     
 
     @objc func reloadWeather() {
-        if let city = UserDefaults.standard.data(forKey: "cityWeather") {
-            if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
-                setWeather(latitude: decodedCity.latitude, longitude: decodedCity.longitude, name: decodedCity.name)
+        if let weather = UserDefaults.standard.data(forKey: "weather") {
+            if let decodedWeather = try? JSONDecoder().decode(WeatherModel.self, from: weather) {
+                errorView.isHidden = true
+                loadingView.isHidden = false
+                loadingView.startAnimating()
+                buttonsHandlerDelegate?.reloadWeatherPressed(weather: decodedWeather)
             }
         }
     }
@@ -389,6 +372,9 @@ class Card: UIView {
     @objc func reloadCrypto() {
         if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedCryptos = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
+                errorView.isHidden = true
+                loadingView.isHidden = false
+                loadingView.startAnimating()
                 buttonsHandlerDelegate?.reloadCryptoPressed(cryptoList: decodedCryptos)
             }
         }

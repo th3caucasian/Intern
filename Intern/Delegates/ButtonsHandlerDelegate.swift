@@ -6,9 +6,11 @@
 //
 
 protocol ButtonsHandlerDelegate: AnyObject {
-    func cityChoicePressed(type: String)
+    func cityChoicePressed(type: DelegateUser)
     
     func cryptoChoicePressed()
     
     func reloadCryptoPressed(cryptoList: [Crypto])
+    
+    func reloadWeatherPressed(weather: WeatherModel)
 }

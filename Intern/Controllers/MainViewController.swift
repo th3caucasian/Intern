@@ -9,10 +9,14 @@ import UIKit
 import TinyConstraints
 import Moya
 
-class MainViewController: UIViewController, ButtonsHandlerDelegate, TransmissionDelegate, NetworkDelegate {
+enum DelegateUser {
+    case map, weather
+}
+
+class MainViewController: UIViewController {
     
     private var cardStack: CardStack!
-    private var lastDelegateUser: String?
+    private var lastDelegateUser: DelegateUser?
     private var cryptoTimer: Timer?
 
 
@@ -66,13 +70,74 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         self.navigationController?.pushViewController(settings, animated: true)
     }
     
+   
+    
+    func startTimer() {
+        cryptoTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(reloadCryptoByTimer), userInfo: nil, repeats: true)
+    }
+    
+    @objc func reloadCryptoByTimer() {
+        if let list = UserDefaults.standard.data(forKey: "cryptoList") {
+            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: list) {
+                reloadCryptoPressed(cryptoList: decodedList)
+            }
+        }
+    }
+    
+}
+
+
+extension MainViewController: TransmissionDelegate {
+    
     func infoReceived(cardsOrder: [String]) {
         if cardsOrder != cardStack.getCardOrder() {
             cardStack.reorder(newOrder: cardsOrder)
         }
     }
     
-    func cityChoicePressed(type: String) {
+    
+    func saveCryptoList(cryptoList: [Crypto]?) {
+        if (cryptoList != nil) && (cryptoList!.isEmpty == false) {
+            startTimer()
+        } else {
+            cryptoTimer?.invalidate()
+            cryptoTimer = nil
+        }
+        cardStack.saveCryptoList(cryptoList: cryptoList)
+    }
+    
+
+    func saveCity(city: City) {
+        switch lastDelegateUser {
+        case .map:
+            cardStack.saveCity(city: city)
+            if let cityEncoded = try? JSONEncoder().encode(city) {
+                UserDefaults.standard.set(cityEncoded, forKey: "city")
+            }
+        case .weather:
+            fetchWeather(latitude: city.latitude, longitude: city.longitude) { fetchedWeather in
+                var weather = fetchedWeather
+                weather?.name = city.name
+                self.cardStack.saveWeather(weather: weather)
+                if fetchedWeather != nil {
+                    if let weatherEncoded = try? JSONEncoder().encode(weather) {
+                        UserDefaults.standard.set(weatherEncoded, forKey: "weather")
+                    }
+                }
+            }
+        default:
+            fatalError("lastDelegateUser не был инициализировн")
+        
+        }
+    }
+    
+    
+}
+
+
+extension MainViewController: ButtonsHandlerDelegate {
+    
+    func cityChoicePressed(type: DelegateUser) {
         lastDelegateUser = type
         let citiesList = CitiesListController()
         citiesList.transmissionDelegate = self
@@ -99,19 +164,21 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         }
     }
     
-    func saveCity(city: City) {
-        cardStack.saveCity(city: city, type: lastDelegateUser!)
+    func reloadWeatherPressed(weather: WeatherModel) {
+        let citiesList = JSONReader().loadCitiesFromFile(fileName: "cities")
+        let city = citiesList.first { $0.name == weather.name }!
+        fetchWeather(latitude: city.latitude, longitude: city.longitude) { fetchedWeather in
+            var weather = fetchedWeather
+            weather?.name = city.name
+            self.cardStack.saveWeather(weather: weather)
+        }
     }
     
-    func saveCryptoList(cryptoList: [Crypto]?) {
-        if (cryptoList != nil) && (cryptoList!.isEmpty == false) {
-            startTimer()
-        } else {
-            cryptoTimer?.invalidate()
-            cryptoTimer = nil
-        }
-        cardStack.saveCryptoList(cryptoList: cryptoList)
-    }
+}
+
+
+extension MainViewController: NetworkDelegate {
+
     
     func fetchCrypto(completition: @escaping ([Crypto]?)->(Void)) {
         let moyaProvider = MoyaProvider<CryptoAPI>()
@@ -132,17 +199,26 @@ class MainViewController: UIViewController, ButtonsHandlerDelegate, Transmission
         }
     }
     
-    func startTimer() {
-        cryptoTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(reloadCryptoByTimer), userInfo: nil, repeats: true)
-    }
     
-    @objc func reloadCryptoByTimer() {
-        if let list = UserDefaults.standard.data(forKey: "cryptoList") {
-            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: list) {
-                reloadCryptoPressed(cryptoList: decodedList)
+    func fetchWeather(latitude: Double, longitude: Double, completition: @escaping (WeatherModel?) -> (Void)) {
+        let moyaProvider = MoyaProvider<WeatherAPI>()
+        moyaProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { result in
+            switch result {
+            case .success(let response):
+                do {
+                    let decoded = try JSONDecoder().decode(WeatherModel.self, from: response.data)
+                    completition(decoded)
+                } catch {
+                    print("Ошибка парсинга \(error)")
+                }
+            case .failure(let error):
+                print("Ошибка сети \(error.localizedDescription)")
+                completition(nil)
             }
         }
     }
+    
+    
+    
 }
-
 

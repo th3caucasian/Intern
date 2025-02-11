@@ -77,24 +77,16 @@ class CardStack: UIView {
         cardList.forEach { tempList.append($0.cardText.text!) }
         return tempList
     }
+
     
-    func saveCity(city: City, type: String) {
-        switch type {
-        case "map":
-            let cityCard = cardList.first {$0.cardText.text! == "Город"}!
-            cityCard.setCity(latitude: city.latitude, longitude: city.longitude)
-            if let cityEncoded = try? JSONEncoder().encode(city) {
-                UserDefaults.standard.set(cityEncoded, forKey: "cityMap")
-            }
-        case "weather":
-            let weatherCard = cardList.first {$0.cardText.text! == "Погода"}!
-            weatherCard.setWeather(latitude: city.latitude, longitude: city.longitude, name: city.name)
-            if let cityEncoded = try? JSONEncoder().encode(city) {
-                UserDefaults.standard.set(cityEncoded, forKey: "cityWeather")
-            }
-        default:
-            fatalError("Неверный параметр был передан в функцию")
-        }
+    func saveCity(city: City) {
+        let cityCard = cardList.first {$0.cardText.text! == "Город"}!
+        cityCard.setCity(latitude: city.latitude, longitude: city.longitude)
+    }
+    
+    func saveWeather(weather: WeatherModel?) {
+        let weatherCard = cardList.first {$0.cardText.text! == "Погода"}!
+        weatherCard.setWeather(weatherModel: weather)
     }
     
     func saveCryptoList(cryptoList: [Crypto]?) {

@@ -19,8 +19,7 @@ class CitiesListController: ListViewController {
     }
     
     override func setupList() {
-        let jsonReader = JSONReader()
-        citiesList = jsonReader.loadCitiesFromFile(fileName: "cities")
+        citiesList = JSONReader().loadCitiesFromFile(fileName: "cities")
         filteredList = citiesList
         self.title = "Выбор города"
     }

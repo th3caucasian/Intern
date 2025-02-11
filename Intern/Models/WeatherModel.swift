@@ -11,7 +11,7 @@ struct WeatherModel: Codable {
     let visibility: Int
     let wind: Wind
     let clouds: Clouds
-    let name: String
+    var name: String
 }
 
 struct Wind: Codable {
