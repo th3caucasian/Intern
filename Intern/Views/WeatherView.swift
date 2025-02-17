@@ -126,9 +126,9 @@ class WeatherView: UIView {
         
         windText.leftToSuperview(offset: 170)
         windText.bottomToSuperview(offset: -90)
-        windValue?.leftToSuperview(offset: 250)
+        windValue?.rightToLeft(of: metersPerSecondText, offset: -5)
         windValue?.bottomToSuperview(offset: -90)
-        metersPerSecondText.leftToRight(of: windValue!, offset: 5)
+        metersPerSecondText.rightToLeft(of: windArrow, offset: -7)
         metersPerSecondText.bottomToSuperview(offset: -90)
         windArrow.bottomToSuperview(offset: -90)
         windArrow.rightToSuperview(offset: -10)

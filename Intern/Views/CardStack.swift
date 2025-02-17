@@ -14,14 +14,6 @@ class CardStack: UIView {
     weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
     weak var networkDelegate: NetworkDelegate?
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     private let cardStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -32,21 +24,17 @@ class CardStack: UIView {
     }()
     
     func setupView() {
-        initList()
+        cardList.append(CityCard())
+        cardList.append(WeatherCard())
+        cardList.append(CryptoCard())
+        
         self.addSubview(cardStack)
         cardStack.edgesToSuperview()
         cardList.forEach {
             cardStack.addArrangedSubview($0)
-            //$0.setupView(buttonsHandlerDelegate, networkDelegate)
+            $0.setupView(buttonsHandlerDelegate, networkDelegate)
         }
-    }
-    
-    // настройка вью карт
-    private func initList() {
-        cardList.append(CityCard())
-        cardList.append(WeatherCard())
-        cardList.append(CryptoCard())
-        cardList.forEach {$0.setupView(buttonsHandlerDelegate, networkDelegate)}
+        
         if let savedOrder = UserDefaults.standard.array(forKey: "cardsOrder") as? [String] {
             reorder(newOrder: savedOrder)
         }
