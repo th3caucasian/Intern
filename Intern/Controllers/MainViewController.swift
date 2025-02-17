@@ -204,7 +204,11 @@ extension MainViewController: NetworkDelegate {
                         let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
                         completition(decoded)
                     } catch {
-                        print("Ошибка парсинга \(error)")
+                        let alert = UIAlertController(title: "Ошибка парсинга криптовалюты", message: "\(error)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
+                        self.present(alert, animated: true)
+                        print("Ошибка парсинга Crypto (All): \(error)\nresponse: \(response)")
+                        print(result)
                     }
                 case .failure(let error):
                     print("Ошибка сети \(error.localizedDescription)")
@@ -220,7 +224,10 @@ extension MainViewController: NetworkDelegate {
                         let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
                         completition(decoded)
                     } catch {
-                        print("Ошибка парсинга \(error)")
+                        let alert = UIAlertController(title: "Ошибка парсинга криптовалюты", message: "\(error)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
+                        self.present(alert, animated: true)
+                        print("Ошибка парсинга Crypto (Selected): \(error)\nresponse: \(response)")
                     }
                 case .failure(let error):
                     print("Ошибка сети \(error.localizedDescription)")
@@ -242,7 +249,10 @@ extension MainViewController: NetworkDelegate {
                     let decoded = try JSONDecoder().decode(WeatherModel.self, from: response.data)
                     completition(decoded)
                 } catch {
-                    print("Ошибка парсинга \(error)")
+                    let alert = UIAlertController(title: "Ошибка парсинга погоды", message: "\(error)", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                    print("Ошибка парсинга Weather\n\(error)\nresponse: \(response)")
                 }
             case .failure(let error):
                 print("Ошибка сети \(error.localizedDescription)")
@@ -250,8 +260,6 @@ extension MainViewController: NetworkDelegate {
             }
         }
     }
-    
-    
     
 }
 

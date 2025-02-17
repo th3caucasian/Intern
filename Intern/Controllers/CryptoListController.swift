@@ -29,15 +29,15 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     override func setupList() {
         networkDelegate?.fetchCrypto(queryType: .all, selectedCrypto: nil) { [weak self] cryptos in
             if cryptos == nil {
-                self!.networkError = true
-                self!.transmissionDelegate?.saveCryptoList(cryptoList: nil)
+                self?.networkError = true
+                self?.transmissionDelegate?.saveCryptoList(cryptoList: nil)
             } else {
-                self!.cryptoList = cryptos!
+                self?.cryptoList = cryptos ?? []
                 for i in self!.cryptoList.indices {
-                    self!.cryptoList[i].id = self!.cryptoList[i].id.prefix(1).uppercased() + self!.cryptoList[i].id.dropFirst()
+                    self?.cryptoList[i].id = self!.cryptoList[i].id.prefix(1).uppercased() + (self?.cryptoList[i].id.dropFirst() ?? "")
                 }
-                self!.filteredList = self!.cryptoList
-                self!.tableView.reloadData()
+                self?.filteredList = self!.cryptoList
+                self?.tableView.reloadData()
             }
         }
         if let cryptos = UserDefaults.standard.data(forKey: "cryptoList") {
