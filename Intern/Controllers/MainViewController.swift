@@ -224,9 +224,6 @@ extension MainViewController: NetworkDelegate {
                         let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
                         completition(decoded)
                     } catch {
-                        let alert = UIAlertController(title: "Ошибка парсинга криптовалюты", message: "\(error)", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
-                        self.present(alert, animated: true)
                         print("Ошибка парсинга Crypto (Selected): \(error)\nresponse: \(response)")
                     }
                 case .failure(let error):

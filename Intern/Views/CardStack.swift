@@ -37,18 +37,16 @@ class CardStack: UIView {
         cardStack.edgesToSuperview()
         cardList.forEach {
             cardStack.addArrangedSubview($0)
-            $0.setupView()
+            //$0.setupView(buttonsHandlerDelegate, networkDelegate)
         }
     }
     
     // настройка вью карт
     private func initList() {
-        for _ in 0...2 {
-            cardList.append(Card(buttonsHandlerDelegate: buttonsHandlerDelegate!, networkDelegate: networkDelegate!))
-        }
-        cardList[0].setupCityCard()
-        cardList[1].setupWeatherCard()
-        cardList[2].setupCryptoCard()
+        cardList.append(CityCard())
+        cardList.append(WeatherCard())
+        cardList.append(CryptoCard())
+        cardList.forEach {$0.setupView(buttonsHandlerDelegate, networkDelegate)}
         if let savedOrder = UserDefaults.standard.array(forKey: "cardsOrder") as? [String] {
             reorder(newOrder: savedOrder)
         }
@@ -81,18 +79,18 @@ class CardStack: UIView {
 
     
     func saveCity(city: City) {
-        let cityCard = cardList.first {$0.cardText.text! == "Город"}!
-        cityCard.setCity(latitude: city.latitude, longitude: city.longitude)
+        let cityCard = cardList.first {$0.cardText.text! == "Город"} as? CityCard
+        cityCard?.setCity(latitude: city.latitude, longitude: city.longitude)
     }
     
     func saveWeather(weather: WeatherModel?) {
-        let weatherCard = cardList.first {$0.cardText.text! == "Погода"}!
-        weatherCard.setWeather(weatherModel: weather)
+        let weatherCard = cardList.first {$0.cardText.text! == "Погода"} as? WeatherCard
+        weatherCard?.setWeather(weatherModel: weather)
     }
     
     func saveCryptoList(cryptoList: [Crypto]?) {
-        let cryptoView = cardList.first {$0.cardText.text! == "Курс криптовалют"}!
-        cryptoView.setCrypto(cryptos: cryptoList)
+        let cryptoView = cardList.first {$0.cardText.text! == "Курс криптовалют"} as? CryptoCard
+        cryptoView?.setCrypto(cryptos: cryptoList)
     }
     
 }
