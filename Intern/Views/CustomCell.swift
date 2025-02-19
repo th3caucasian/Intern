@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import TinyConstraints
 
 class CustomCell: UITableViewCell {
     let leftLabel: UILabel = {
@@ -33,10 +34,8 @@ class CustomCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        horizontalStack.addArrangedSubview(leftLabel)
-        horizontalStack.addArrangedSubview(mainLabel)
-        leftLabel.leftToSuperview(offset: 20)
-        leftLabel.heightToSuperview()
+        [leftLabel, mainLabel].forEach(horizontalStack.addArrangedSubview(_:))
+        leftLabel.edgesToSuperview(excluding: [.right], insets: TinyEdgeInsets(top: 0, left: 20, bottom: 0, right: 0))
         mainLabel.heightToSuperview()
         mainLabel.leftToRight(of: leftLabel, offset: 20)
         contentView.addSubview(horizontalStack)

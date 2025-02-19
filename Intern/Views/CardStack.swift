@@ -8,6 +8,7 @@
 import UIKit
 import TinyConstraints
 
+
 class CardStack: UIView {
     
     private var cardList: [Card] = []
@@ -24,32 +25,32 @@ class CardStack: UIView {
     }()
     
     func setupView() {
-        cardList.append(CityCard())
-        cardList.append(WeatherCard())
-        cardList.append(CryptoCard())
+        [CityCard(), WeatherCard(), CryptoCard()].forEach{cardList.append($0)}
         
-        self.addSubview(cardStack)
+        addSubview(cardStack)
         cardStack.edgesToSuperview()
         cardList.forEach {
             cardStack.addArrangedSubview($0)
             $0.setupView(buttonsHandlerDelegate, networkDelegate)
         }
         
-        if let savedOrder = UserDefaults.standard.array(forKey: "cardsOrder") as? [String] {
-            reorder(newOrder: savedOrder)
+        if let savedOrder = UserDefaults.standard.data(forKey: "cardsOrder") {
+            if let decodedOrder = try? JSONDecoder().decode([CardType].self, from: savedOrder) {
+                reorder(newOrder: decodedOrder)
+            }
         }
     }
     
-    func reorder(newOrder: [String]) {
+    func reorder(newOrder: [CardType]) {
         var tempList: [Card] = []
         newOrder.forEach {
             switch $0 {
-            case "Город":
-                tempList.append(cardList.first {$0.cardText.text! == "Город"}!)
-            case "Погода":
-                tempList.append(cardList.first {$0.cardText.text! == "Погода"}!)
-            case "Курс криптовалют":
-                tempList.append(cardList.first {$0.cardText.text! == "Курс криптовалют"}!)
+            case .city:
+                tempList.append(cardList.first {$0.cardType == .city} ?? CityCard())
+            case .weather:
+                tempList.append(cardList.first {$0.cardType == .weather} ?? WeatherCard())
+            case .crypto:
+                tempList.append(cardList.first {$0.cardType == .crypto} ?? CryptoCard())
             default:
                 fatalError("Несоответствие списков")
             }
@@ -59,9 +60,9 @@ class CardStack: UIView {
         cardList.forEach { cardStack.addArrangedSubview($0) }
     }
     
-    func getCardOrder() -> [String] {
-        var tempList: [String] = []
-        cardList.forEach { tempList.append($0.cardText.text!) }
+    func getCardOrder() -> [CardType] {
+        var tempList: [CardType] = []
+        cardList.forEach { tempList.append($0.cardType) }
         return tempList
     }
 

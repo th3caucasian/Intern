@@ -68,7 +68,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
             transmissionDelegate?.saveCryptoList(cryptoList: selectedCrypto)
             if let cryptosEncoded = try? JSONEncoder().encode(selectedCrypto) {
                 UserDefaults.standard.set(cryptosEncoded, forKey: "cryptoList")
-            }
+            }   
         }
     }
     

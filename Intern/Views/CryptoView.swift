@@ -61,7 +61,6 @@ class CryptoView: UIView {
     }()
     
     func fillData(cryptoName: String, cryptoImage: String, cryptoPrice: String, priceDynamic: String) {
-        
         self.cryptoName.text = cryptoName
         self.cryptoImage.kf.setImage(with: URL(string: cryptoImage))
         self.cryptoPrice.text = cryptoPrice
@@ -80,11 +79,6 @@ class CryptoView: UIView {
     }
     
     func setupView() {
-        
-        [cryptoName, cryptoImage, cryptoPrice, horizontalStack].forEach {addSubview($0) }
-        horizontalStack.addArrangedSubview(priceDynamic)
-        horizontalStack.addArrangedSubview(arrowImage)
-        
         backgroundColor = .white
         layer.cornerRadius = 20
         layer.shadowColor = UIColor.black.cgColor
@@ -92,6 +86,10 @@ class CryptoView: UIView {
         layer.shadowOpacity = 0.5
         layer.shadowOffset = CGSize(width: 0, height: 2)
         translatesAutoresizingMaskIntoConstraints = false
+        
+        [cryptoName, cryptoImage, cryptoPrice, horizontalStack].forEach(addSubview(_:))
+        [priceDynamic, arrowImage].forEach(horizontalStack.addArrangedSubview(_:))
+
         
         cryptoName.widthToSuperview(multiplier: 0.9)
         cryptoName.centerXToSuperview()

@@ -55,8 +55,8 @@ class WeatherView: UIView {
     }
 
     func setupView() {
-        self.backgroundColor = .lightBlue.withAlphaComponent(0.2)
-        self.layer.cornerRadius = 20
+        backgroundColor = .lightBlue.withAlphaComponent(0.2)
+        layer.cornerRadius = 20
 
         let feelsLikeText = ViewBuilder.createTextLabel(text: "Ощущается как")
         let windText = ViewBuilder.createTextLabel(text: "Ветер")

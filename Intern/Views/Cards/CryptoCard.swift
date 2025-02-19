@@ -42,6 +42,7 @@ class CryptoCard: Card {
                 buttonsHandlerDelegate?.reloadCryptoPressed(cryptoList: decodedList)
             }
         }
+        cardType = .crypto
     }
     
     @objc func delegateCryptoPressed() {

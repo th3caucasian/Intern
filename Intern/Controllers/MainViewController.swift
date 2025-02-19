@@ -96,10 +96,11 @@ class MainViewController: UIViewController {
 
 extension MainViewController: TransmissionDelegate {
     
-    func infoReceived(cardsOrder: [String]) {
-        if cardsOrder != cardStack.getCardOrder() {
-            cardStack.reorder(newOrder: cardsOrder)
-        }
+    func infoReceived(cardsOrder: [CardType]) {
+//        if cardsOrder != cardStack.getCardOrder() {
+//            cardStack.reorder(newOrder: cardsOrder)
+//        }
+        cardStack.reorder(newOrder: cardsOrder)
     }
     
     

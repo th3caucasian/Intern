@@ -32,6 +32,7 @@ class WeatherCard: Card {
                 buttonsHandlerDelegate?.reloadWeatherPressed(weather: decodedWeather)
             }
         }
+        cardType = .weather
     }
     
     
@@ -44,11 +45,7 @@ class WeatherCard: Card {
         if (choice == false) {
             choice = true
             [choiceButton, defaultImage].forEach {$0.isHidden = true}
-//            choiceButton.isHidden = true
-//            defaultImage.isHidden = true
             [weatherView, loadingView].forEach {placeholder.addSubview($0)}
-//            placeholder.addSubview(weatherView)
-//            placeholder.addSubview(loadingView)
             loadingView.centerInSuperview()
             weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         }
@@ -68,9 +65,6 @@ class WeatherCard: Card {
             )
             loadingView.stopAnimating()
             [choiceButton, defaultImage, errorView].forEach {$0.isHidden = true}
-//            choiceButton.isHidden = true
-//            defaultImage.isHidden = true
-//            errorView.isHidden = true
             weatherView.isHidden = false
         } else {
             loadingView.stopAnimating()

@@ -9,6 +9,7 @@ import MapKit
 import TinyConstraints
 
 class CityCard: Card {
+        
     private let mapView: MKMapView = {
         let map = MKMapView()
         map.translatesAutoresizingMaskIntoConstraints = false
@@ -21,7 +22,7 @@ class CityCard: Card {
     
     override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?, _ networkDelegate: NetworkDelegate?) {
         super.setupView(buttonsHandlerDelegate, networkDelegate)
-
+        
         [choiceButton, settingsButton].forEach {
             $0.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
         }
@@ -32,6 +33,7 @@ class CityCard: Card {
                 setCity(latitude: decodedCity.latitude, longitude: decodedCity.longitude)
             }
         }
+        cardType = .city
     }
     
     @objc func delegateCityChoicePressed() {

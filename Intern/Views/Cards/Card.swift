@@ -8,10 +8,18 @@
 import UIKit
 import TinyConstraints
 
+enum CardType: String, Codable {
+    case unknown = ""
+    case city = "Город"
+    case weather = "Погода"
+    case crypto = "Курс криптовалют"
+}
+
 // Вью одной карточки
 class Card: UIView {
     
     var choice = false
+    var cardType = CardType.unknown
     weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
     weak var networkDelegate: NetworkDelegate?
     

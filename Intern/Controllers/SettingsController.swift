@@ -12,7 +12,7 @@ import TinyConstraints
 class SettingsController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     weak var transmissionDelegate: TransmissionDelegate?
-    var cardList: [String] = []
+    var cardList: [CardType] = []
     
     var tableView: UITableView = {
         let tableView = UITableView()
@@ -61,8 +61,10 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     
     @objc func buttonSavePressed() {
         transmissionDelegate?.infoReceived(cardsOrder: cardList)
-        UserDefaults.standard.set(cardList, forKey: "cardsOrder")
-        self.navigationController?.popViewController(animated: true)
+        if let encodedList = try? JSONEncoder().encode(cardList) {
+            UserDefaults.standard.set(encodedList, forKey: "cardsOrder")
+        }
+        navigationController?.popViewController(animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -71,14 +73,13 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = cardList[indexPath.row]
+        cell.textLabel?.text = cardList[indexPath.row].rawValue
         return cell
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let movedItem = cardList.remove(at: sourceIndexPath.row)
         cardList.insert(movedItem, at: destinationIndexPath.row)
-        
     }
     
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -88,6 +89,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         .none
     }
+    
     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         return false
     }
