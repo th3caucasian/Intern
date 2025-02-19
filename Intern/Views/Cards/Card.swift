@@ -21,7 +21,6 @@ class Card: UIView {
     var choice = false
     var cardType = CardType.unknown
     weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
-    weak var networkDelegate: NetworkDelegate?
     
 
     let settingsButton: UIButton = {
@@ -127,9 +126,8 @@ class Card: UIView {
         return indicator
     }()
 
-    func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?, _ networkDelegate: NetworkDelegate?) {
+    func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?) {
         self.buttonsHandlerDelegate = buttonsHandlerDelegate
-        self.networkDelegate = networkDelegate
         
         addSubview(verticalStack)
         verticalStack.widthToSuperview(multiplier: 0.9)

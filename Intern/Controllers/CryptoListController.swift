@@ -16,7 +16,6 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     private var filteredList: [Crypto] = []
     var selectedCrypto: [Crypto] = []
     weak var transmissionDelegate: TransmissionDelegate?
-    weak var networkDelegate: NetworkDelegate?
     private var networkError = false
     
     
@@ -27,18 +26,24 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     
     // Происходит настройка списка - подгружается информация из АПИ
     override func setupList() {
-        networkDelegate?.fetchCrypto(queryType: .all, selectedCrypto: nil) { [weak self] cryptos in
-            if cryptos == nil {
+        APIHelper.shared.getAllCrypto { [weak self] result in
+            switch result {
+            case .success(let cryptos):
+                guard let guardedSelf = self else {return}
+                guardedSelf.cryptoList = cryptos
+                for i in guardedSelf.cryptoList.indices {
+                    guardedSelf.cryptoList[i].id = guardedSelf.cryptoList[i].id.prefix(1).uppercased() + guardedSelf.cryptoList[i].id.dropFirst()
+                }
+                guardedSelf.filteredList = guardedSelf.cryptoList
+                guardedSelf.tableView.reloadData()
+
+                
+            case .failure(let error):
+                print("Ошибка криптовалюты: \(error)")
                 self?.networkError = true
                 self?.transmissionDelegate?.saveCryptoList(cryptoList: nil)
-            } else {
-                self?.cryptoList = cryptos ?? []
-                for i in self!.cryptoList.indices {
-                    self?.cryptoList[i].id = (self?.cryptoList[i].id.prefix(1).uppercased() ?? "") + (self?.cryptoList[i].id.dropFirst() ?? "")
-                }
-                self?.filteredList = self!.cryptoList
-                self?.tableView.reloadData()
             }
+
         }
         if let cryptos = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptos) {
@@ -47,7 +52,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
                     }
                 }
         }
-        self.title = "Выбор криптовалюты"
+        title = "Выбор криптовалюты"
     }
     
     override func updateSearchResults(for searchController: UISearchController) {

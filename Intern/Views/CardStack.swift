@@ -13,8 +13,7 @@ class CardStack: UIView {
     
     private var cardList: [Card] = []
     weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
-    weak var networkDelegate: NetworkDelegate?
-    
+
     private let cardStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -31,7 +30,7 @@ class CardStack: UIView {
         cardStack.edgesToSuperview()
         cardList.forEach {
             cardStack.addArrangedSubview($0)
-            $0.setupView(buttonsHandlerDelegate, networkDelegate)
+            $0.setupView(buttonsHandlerDelegate)
         }
         
         if let savedOrder = UserDefaults.standard.data(forKey: "cardsOrder") {
@@ -68,17 +67,17 @@ class CardStack: UIView {
 
     
     func saveCity(city: City) {
-        let cityCard = cardList.first {$0.cardText.text! == "Город"} as? CityCard
+        let cityCard = cardList.first {$0.cardType == .city} as? CityCard
         cityCard?.setCity(latitude: city.latitude, longitude: city.longitude)
     }
     
     func saveWeather(weather: WeatherModel?) {
-        let weatherCard = cardList.first {$0.cardText.text! == "Погода"} as? WeatherCard
+        let weatherCard = cardList.first {$0.cardType == .weather} as? WeatherCard
         weatherCard?.setWeather(weatherModel: weather)
     }
     
     func saveCryptoList(cryptoList: [Crypto]?) {
-        let cryptoView = cardList.first {$0.cardText.text! == "Курс криптовалют"} as? CryptoCard
+        let cryptoView = cardList.first {$0.cardType == .crypto} as? CryptoCard
         cryptoView?.setCrypto(cryptos: cryptoList)
     }
     

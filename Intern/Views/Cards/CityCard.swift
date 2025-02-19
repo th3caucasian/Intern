@@ -20,8 +20,8 @@ class CityCard: Card {
         return map
     }()
     
-    override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?, _ networkDelegate: NetworkDelegate?) {
-        super.setupView(buttonsHandlerDelegate, networkDelegate)
+    override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?) {
+        super.setupView(buttonsHandlerDelegate)
         
         [choiceButton, settingsButton].forEach {
             $0.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)

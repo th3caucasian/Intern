@@ -13,8 +13,8 @@ class WeatherCard: Card {
     private let weatherView = WeatherView()
     
     
-    override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?, _ networkDelegate: NetworkDelegate?) {
-        super.setupView(buttonsHandlerDelegate, networkDelegate)
+    override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?) {
+        super.setupView(buttonsHandlerDelegate)
         
         choiceButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
         settingsButton.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
@@ -26,8 +26,7 @@ class WeatherCard: Card {
         if let weather = UserDefaults.standard.data(forKey: "weather") {
             if let decodedWeather = try? JSONDecoder().decode(WeatherModel.self, from: weather) {
                 loadingView.isHidden = false
-                defaultImage.isHidden = true
-                choiceButton.isHidden = true
+                [defaultImage, choiceButton].forEach {$0.isHidden = true}
                 loadingView.startAnimating()
                 buttonsHandlerDelegate?.reloadWeatherPressed(weather: decodedWeather)
             }

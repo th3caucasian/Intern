@@ -20,8 +20,8 @@ class CryptoCard: Card {
     }()
 
     
-    override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?, _ networkDelegate: NetworkDelegate?) {
-        super.setupView(buttonsHandlerDelegate, networkDelegate)
+    override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?) {
+        super.setupView(buttonsHandlerDelegate)
         
         [choiceButton, settingsButton].forEach {
             $0.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
@@ -36,8 +36,7 @@ class CryptoCard: Card {
         if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
                 loadingView.isHidden = false
-                defaultImage.isHidden = true
-                choiceButton.isHidden = true
+                [defaultImage, choiceButton].forEach {$0.isHidden = true}
                 loadingView.startAnimating()
                 buttonsHandlerDelegate?.reloadCryptoPressed(cryptoList: decodedList)
             }
@@ -55,8 +54,7 @@ class CryptoCard: Card {
         if (choice == false) {
             choice = true
             loadingView.stopAnimating()
-            choiceButton.isHidden = true
-            defaultImage.isHidden = true
+            [choiceButton, defaultImage].forEach {$0.isHidden = true}
             placeholder.addSubview(horizontalStack)
             horizontalStack.edgesToSuperview()
         }
