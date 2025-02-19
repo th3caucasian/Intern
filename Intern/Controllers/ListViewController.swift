@@ -23,13 +23,6 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         return tableView
     }()
     
-    init() {
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) еще не реализован")
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

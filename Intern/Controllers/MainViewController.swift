@@ -92,6 +92,8 @@ class MainViewController: UIViewController {
 }
 
 
+
+
 extension MainViewController: TransmissionDelegate {
     
     func infoReceived(cardsOrder: [String]) {
@@ -132,12 +134,10 @@ extension MainViewController: TransmissionDelegate {
             }
         default:
             fatalError("lastDelegateUser не был инициализировн")
-        
         }
     }
-    
-    
 }
+
 
 
 extension MainViewController: ButtonsHandlerDelegate {
@@ -189,6 +189,9 @@ extension MainViewController: ButtonsHandlerDelegate {
 }
 
 
+
+
+
 extension MainViewController: NetworkDelegate {
 
 
@@ -204,11 +207,8 @@ extension MainViewController: NetworkDelegate {
                         let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
                         completition(decoded)
                     } catch {
-                        let alert = UIAlertController(title: "Ошибка парсинга криптовалюты", message: "Вероятно превышено количество запросов. Немного подождите и попробуйте открыть список еще раз.", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        self.showAlert(title: "Ошибка парсинга криптовалюты", message: "Вероятно превышено количество запросов. Подождите немного и попробуйте еще раз.")
                         print("Ошибка парсинга Crypto (All): \(error)\nresponse: \(response)")
-                        print(result)
                     }
                 case .failure(let error):
                     print("Ошибка сети \(error.localizedDescription)")
@@ -246,9 +246,7 @@ extension MainViewController: NetworkDelegate {
                     let decoded = try JSONDecoder().decode(WeatherModel.self, from: response.data)
                     completition(decoded)
                 } catch {
-                    let alert = UIAlertController(title: "Ошибка парсинга погоды", message: "\(error)", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
-                    self.present(alert, animated: true)
+                    self.showAlert(title: "Ошибка парсинга погоды", message: "\(error)")
                     print("Ошибка парсинга Weather\n\(error)\nresponse: \(response)")
                 }
             case .failure(let error):
@@ -259,4 +257,14 @@ extension MainViewController: NetworkDelegate {
     }
     
 }
+
+
+extension UIViewController {
+    func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+}
+
 

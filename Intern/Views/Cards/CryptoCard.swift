@@ -23,8 +23,9 @@ class CryptoCard: Card {
     override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?, _ networkDelegate: NetworkDelegate?) {
         super.setupView(buttonsHandlerDelegate, networkDelegate)
         
-        choiceButton.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
-        settingsButton.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
+        [choiceButton, settingsButton].forEach {
+            $0.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
+        }
         cardText.text = "Курс криптовалют"
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
         placeholder.addSubview(loadingView)
@@ -61,10 +62,8 @@ class CryptoCard: Card {
         if var cryptoList = cryptos {
             if (cryptoList.isEmpty) {
                 choice = false
-                choiceButton.isHidden = false
-                defaultImage.isHidden = false
-                errorView.isHidden = true
-                horizontalStack.isHidden = true
+                [choiceButton, defaultImage].forEach {$0.isHidden = false}
+                [errorView, horizontalStack].forEach {$0.isHidden = true}
                 return
             }
             cryptoList = cryptoList.sorted { $0.id < $1.id }
@@ -73,9 +72,7 @@ class CryptoCard: Card {
             horizontalStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
             let leftSpacer: UIView = UIView()
             let rightSpacer: UIView = UIView()
-            horizontalStack.addArrangedSubview(leftSpacer)
-            horizontalStack.addArrangedSubview(rightSpacer)
-            
+            [leftSpacer, rightSpacer].forEach { horizontalStack.addArrangedSubview($0) }
             for i in cryptoList.indices {
                 cryptoViews.append(CryptoView())
                 let crypto = cryptoList[i]
@@ -87,9 +84,7 @@ class CryptoCard: Card {
             }
         } else {
             loadingView.stopAnimating()
-            choiceButton.isHidden = true
-            defaultImage.isHidden = true
-            horizontalStack.isHidden = true
+            [choiceButton, defaultImage, horizontalStack].forEach { $0.isHidden = true }
             errorView.isHidden = false
         }
     }

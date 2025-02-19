@@ -22,8 +22,9 @@ class CityCard: Card {
     override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?, _ networkDelegate: NetworkDelegate?) {
         super.setupView(buttonsHandlerDelegate, networkDelegate)
 
-        choiceButton.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
-        settingsButton.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
+        [choiceButton, settingsButton].forEach {
+            $0.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
+        }
         cardText.text = "Город"
         defaultImage.image = UIImage(named: "map_bckgrnd")
         if let city = UserDefaults.standard.data(forKey: "city") {

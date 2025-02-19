@@ -80,20 +80,18 @@ class CryptoView: UIView {
     }
     
     func setupView() {
-        self.addSubview(cryptoName)
-        self.addSubview(cryptoImage)
-        self.addSubview(cryptoPrice)
-        self.addSubview(horizontalStack)
+        
+        [cryptoName, cryptoImage, cryptoPrice, horizontalStack].forEach {addSubview($0) }
         horizontalStack.addArrangedSubview(priceDynamic)
         horizontalStack.addArrangedSubview(arrowImage)
         
-        self.backgroundColor = .white
-        self.layer.cornerRadius = 20
-        self.layer.shadowColor = UIColor.black.cgColor
-        self.layer.shadowRadius = 5
-        self.layer.shadowOpacity = 0.5
-        self.layer.shadowOffset = CGSize(width: 0, height: 2)
-        self.translatesAutoresizingMaskIntoConstraints = false
+        backgroundColor = .white
+        layer.cornerRadius = 20
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowRadius = 5
+        layer.shadowOpacity = 0.5
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        translatesAutoresizingMaskIntoConstraints = false
         
         cryptoName.widthToSuperview(multiplier: 0.9)
         cryptoName.centerXToSuperview()

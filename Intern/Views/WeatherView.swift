@@ -7,18 +7,19 @@
 
 import UIKit
 import Kingfisher
+import TinyConstraints
 
 class WeatherView: UIView {
     
-    private var cityText: UILabel?
-    private var weatherText: UILabel?
-    private var temperatureValue: UILabel?
-    private var feelsLikeValue: UILabel?
-    private var windValue: UILabel?
-    private var pressureValue: UILabel?
-    private var humidityValue : UILabel?
-    private var cloudnessValue: UILabel?
-    private var visibilityValue: UILabel?
+    private var cityText = ViewBuilder.createLabel(font: .systemFont(ofSize: 25, weight: .bold), text: "")
+    private var weatherText = ViewBuilder.createTextLabel(text: "")
+    private var temperatureValue = ViewBuilder.createLabel(font: .systemFont(ofSize: 25, weight: .bold), text: "")
+    private var feelsLikeValue = ViewBuilder.createValueLabel(text: "")
+    private var windValue = ViewBuilder.createValueLabel(text: "")
+    private var pressureValue = ViewBuilder.createValueLabel(text: "")
+    private var humidityValue = ViewBuilder.createValueLabel(text: "")
+    private var cloudnessValue = ViewBuilder.createValueLabel(text: "")
+    private var visibilityValue = ViewBuilder.createValueLabel(text: "")
     
     
     private let weatherImage: UIImageView = {
@@ -39,17 +40,17 @@ class WeatherView: UIView {
     }()
     
     func fillData(city: String, image: String, weather: String, temperature: String, feelsLike: String, wind: String, windDegree: Int, pressure: String, humidity: String, cloudness: String, visibility: String) {
-        cityText!.text = city
-        weatherText!.text = weather
+        cityText.text = city
+        weatherText.text = weather
         weatherImage.kf.setImage(with: URL(string: "https://openweathermap.org/img/wn/\(image)@2x.png"))
-        temperatureValue!.text = temperature
-        feelsLikeValue!.text = feelsLike
-        windValue!.text = wind
+        temperatureValue.text = temperature
+        feelsLikeValue.text = feelsLike
+        windValue.text = wind
         windArrow.transform = CGAffineTransform(rotationAngle: CGFloat(windDegree) * CGFloat.pi / 180)
-        pressureValue!.text = pressure
-        humidityValue!.text = humidity
-        cloudnessValue!.text = cloudness
-        visibilityValue!.text = visibility
+        pressureValue.text = pressure
+        humidityValue.text = humidity
+        cloudnessValue.text = cloudness
+        visibilityValue.text = visibility
 
     }
 
@@ -57,124 +58,61 @@ class WeatherView: UIView {
         self.backgroundColor = .lightBlue.withAlphaComponent(0.2)
         self.layer.cornerRadius = 20
 
-        let feelsLikeText = createTextLabel(text: "Ощущается как")
-        let windText = createTextLabel(text: "Ветер")
-        let metersPerSecondText = createTextLabel(text: "м/с")
-        let pressureText = createTextLabel(text: "Давление")
-        let humidityText = createTextLabel(text: "Влажность")
-        let percentageText1 = createTextLabel(text: "%")
-        let percentageText2 = createTextLabel(text: "%")
-        let cloudnessText = createTextLabel(text: "Облачность")
-        let visibilityText = createTextLabel(text: "Видимость")
-        let kmText = createTextLabel(text: "км")
-        let mmRtStText = createTextLabel(text: "м.р.ст")
+        let feelsLikeText = ViewBuilder.createTextLabel(text: "Ощущается как")
+        let windText = ViewBuilder.createTextLabel(text: "Ветер")
+        let metersPerSecondText = ViewBuilder.createTextLabel(text: "м/с")
+        let pressureText = ViewBuilder.createTextLabel(text: "Давление")
+        let humidityText = ViewBuilder.createTextLabel(text: "Влажность")
+        let percentageText1 = ViewBuilder.createTextLabel(text: "%")
+        let percentageText2 = ViewBuilder.createTextLabel(text: "%")
+        let cloudnessText = ViewBuilder.createTextLabel(text: "Облачность")
+        let visibilityText = ViewBuilder.createTextLabel(text: "Видимость")
+        let kmText = ViewBuilder.createTextLabel(text: "км")
+        let mmRtStText = ViewBuilder.createTextLabel(text: "м.р.ст")
+
+                
+        [cityText, weatherText, weatherImage, feelsLikeText, feelsLikeValue, temperatureValue, windText, windValue, windArrow, metersPerSecondText, pressureText, pressureValue, mmRtStText, humidityText, humidityValue, percentageText1, cloudnessText, cloudnessValue, percentageText2, visibilityText, visibilityValue, kmText].forEach(addSubview(_:))
         
-        
-        cityText = createValueLabel(text: "")
-        weatherText = createTextLabel(text: "")
-        temperatureValue = createValueLabel(text: "")
-        feelsLikeValue = createValueLabel(text: "")
-        windValue = createValueLabel(text: "")
-        pressureValue = createValueLabel(text: "")
-        humidityValue = createValueLabel(text: "")
-        cloudnessValue = createValueLabel(text: "")
-        visibilityValue = createValueLabel(text: "")
-        
-        
-        self.addSubview(cityText!)
-        self.addSubview(weatherText!)
-        self.addSubview(weatherImage)
-        self.addSubview(feelsLikeText)
-        self.addSubview(feelsLikeValue!)
-        self.addSubview(temperatureValue!)
-        self.addSubview(windText)
-        self.addSubview(windValue!)
-        self.addSubview(windArrow)
-        self.addSubview(metersPerSecondText)
-        self.addSubview(pressureText)
-        self.addSubview(pressureValue!)
-        self.addSubview(mmRtStText)
-        self.addSubview(humidityText)
-        self.addSubview(humidityValue!)
-        self.addSubview(percentageText1)
-        self.addSubview(cloudnessText)
-        self.addSubview(cloudnessValue!)
-        self.addSubview(percentageText2)
-        self.addSubview(visibilityText)
-        self.addSubview(visibilityValue!)
-        self.addSubview(kmText)
-        
-        cityText?.font = UIFont.systemFont(ofSize: 25, weight: .bold)
-        cityText?.topToSuperview(offset: 10)
-        cityText?.leftToSuperview(offset: 12)
-        
-        weatherText?.topToSuperview(offset: 40)
-        weatherText?.leftToSuperview(offset: 12)
+        cityText.edgesToSuperview(excluding: [.right, .bottom], insets: TinyEdgeInsets(top: 10, left: 12, bottom: 0, right: 0))
+
+        weatherText.edgesToSuperview(excluding: [.bottom, .right], insets: TinyEdgeInsets(top: 40, left: 12, bottom: 0, right: 0))
         
         weatherImage.topToSuperview(offset: 50)
-        weatherImage.rightToLeft(of: temperatureValue!, offset: 5)
+        weatherImage.rightToLeft(of: temperatureValue, offset: 5)
         
-        temperatureValue?.font = UIFont.systemFont(ofSize: 25, weight: .bold)
-        temperatureValue?.bottomToSuperview(offset: -60)
-        temperatureValue?.rightToLeft(of: pressureText, offset: -5)
+        temperatureValue.bottomToSuperview(offset: -60)
+        temperatureValue.rightToLeft(of: pressureText, offset: -5)
         
-        feelsLikeText.leftToSuperview(offset: 12)
-        feelsLikeText.bottomToSuperview(offset: -10)
-        feelsLikeValue?.rightToLeft(of: visibilityText, offset: -5)
-        feelsLikeValue?.bottomToSuperview(offset: -10)
+        feelsLikeText.edgesToSuperview(excluding: [.top, .right], insets: TinyEdgeInsets(top: 0, left: 12, bottom: 12, right: 0))
+        feelsLikeValue.rightToLeft(of: visibilityText, offset: -5)
+        feelsLikeValue.bottomToSuperview(offset: -10)
         
-        
-        windText.leftToSuperview(offset: 170)
-        windText.bottomToSuperview(offset: -90)
-        windValue?.rightToLeft(of: metersPerSecondText, offset: -5)
-        windValue?.bottomToSuperview(offset: -90)
+        windText.edgesToSuperview(excluding: [.top, .right], insets: TinyEdgeInsets(top: 0, left: 170, bottom: 90, right: 0))
+        windValue.rightToLeft(of: metersPerSecondText, offset: -5)
+        windValue.bottomToSuperview(offset: -90)
         metersPerSecondText.rightToLeft(of: windArrow, offset: -7)
         metersPerSecondText.bottomToSuperview(offset: -90)
-        windArrow.bottomToSuperview(offset: -90)
-        windArrow.rightToSuperview(offset: -10)
+        windArrow.edgesToSuperview(excluding: [.top, .left], insets: TinyEdgeInsets(top: 0, left: 0, bottom: 90, right: 10))
+
+        pressureText.edgesToSuperview(excluding: [.top, .right], insets: TinyEdgeInsets(top: 0, left: 170, bottom: 70, right: 0))
+        pressureValue.rightToLeft(of: mmRtStText, offset: -5)
+        pressureValue.bottomToSuperview(offset: -70)
+        mmRtStText.edgesToSuperview(excluding: [.top, .left], insets: TinyEdgeInsets(top: 0, left: 0, bottom: 70, right: 5))
+
+        humidityText.edgesToSuperview(excluding: [.top, .right], insets: TinyEdgeInsets(top: 0, left: 170, bottom: 50, right: 0))
+        humidityValue.rightToLeft(of: percentageText1, offset: -5)
+        humidityValue.bottomToSuperview(offset: -50)
+        percentageText1.edgesToSuperview(excluding: [.top, .left], insets: TinyEdgeInsets(top: 0, left: 0, bottom: 50, right: 5))
         
-        pressureText.leftToSuperview(offset: 170)
-        pressureText.bottomToSuperview(offset: -70)
-        pressureValue?.rightToLeft(of: mmRtStText, offset: -5)
-        pressureValue?.bottomToSuperview(offset: -70)
-        mmRtStText.rightToSuperview(offset: -5)
-        mmRtStText.bottomToSuperview(offset: -70)
+        cloudnessText.edgesToSuperview(excluding: [.top, .right], insets: TinyEdgeInsets(top: 0, left: 170, bottom: 30, right: 0))
+        cloudnessValue.rightToLeft(of: percentageText2, offset: -5)
+        cloudnessValue.bottomToSuperview(offset: -30)
+        percentageText2.edgesToSuperview(excluding: [.top, .left], insets: TinyEdgeInsets(top: 0, left: 0, bottom: 30, right: 5))
         
-        humidityText.leftToSuperview(offset: 170)
-        humidityText.bottomToSuperview(offset: -50)
-        humidityValue?.rightToLeft(of: percentageText1, offset: -5)
-        humidityValue?.bottomToSuperview(offset: -50)
-        percentageText1.rightToSuperview(offset: -5)
-        percentageText1.bottomToSuperview(offset: -50)
-        
-        cloudnessText.leftToSuperview(offset: 170)
-        cloudnessText.bottomToSuperview(offset: -30)
-        cloudnessValue?.rightToLeft(of: percentageText2, offset: -5)
-        cloudnessValue?.bottomToSuperview(offset: -30)
-        percentageText2.rightToSuperview(offset: -5)
-        percentageText2.bottomToSuperview(offset: -30)
-        
-        visibilityText.leftToSuperview(offset: 170)
-        visibilityText.bottomToSuperview(offset: -10)
-        visibilityValue?.rightToLeft(of: kmText, offset: -5)
-        visibilityValue?.bottomToSuperview(offset: -10)
-        kmText.rightToSuperview(offset: -5)
-        kmText.bottomToSuperview(offset: -10)
+        visibilityText.edgesToSuperview(excluding: [.top, .right], insets: TinyEdgeInsets(top: 0, left: 170, bottom: 10, right: 0))
+        visibilityValue.rightToLeft(of: kmText, offset: -5)
+        visibilityValue.bottomToSuperview(offset: -10)
+        kmText.edgesToSuperview(excluding: [.top, .left], insets: TinyEdgeInsets(top: 0, left: 0, bottom: 10, right: 5))
     }
     
-    private func createTextLabel(text: String) -> UILabel {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .light)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = text
-        return label
-    }
-    
-    private func createValueLabel(text: String) -> UILabel {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = text
-        return label
-    }
 }

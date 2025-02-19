@@ -34,7 +34,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
             } else {
                 self?.cryptoList = cryptos ?? []
                 for i in self!.cryptoList.indices {
-                    self?.cryptoList[i].id = self!.cryptoList[i].id.prefix(1).uppercased() + (self?.cryptoList[i].id.dropFirst() ?? "")
+                    self?.cryptoList[i].id = (self?.cryptoList[i].id.prefix(1).uppercased() ?? "") + (self?.cryptoList[i].id.dropFirst() ?? "")
                 }
                 self?.filteredList = self!.cryptoList
                 self?.tableView.reloadData()

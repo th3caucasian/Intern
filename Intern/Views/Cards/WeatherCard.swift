@@ -43,10 +43,12 @@ class WeatherCard: Card {
     func setWeather(weatherModel: WeatherModel?) {
         if (choice == false) {
             choice = true
-            choiceButton.isHidden = true
-            defaultImage.isHidden = true
-            placeholder.addSubview(weatherView)
-            placeholder.addSubview(loadingView)
+            [choiceButton, defaultImage].forEach {$0.isHidden = true}
+//            choiceButton.isHidden = true
+//            defaultImage.isHidden = true
+            [weatherView, loadingView].forEach {placeholder.addSubview($0)}
+//            placeholder.addSubview(weatherView)
+//            placeholder.addSubview(loadingView)
             loadingView.centerInSuperview()
             weatherView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         }
@@ -65,9 +67,10 @@ class WeatherCard: Card {
                 visibility: String(weather.visibility / 1000)
             )
             loadingView.stopAnimating()
-            choiceButton.isHidden = true
-            defaultImage.isHidden = true
-            errorView.isHidden = true
+            [choiceButton, defaultImage, errorView].forEach {$0.isHidden = true}
+//            choiceButton.isHidden = true
+//            defaultImage.isHidden = true
+//            errorView.isHidden = true
             weatherView.isHidden = false
         } else {
             loadingView.stopAnimating()

@@ -123,33 +123,26 @@ class Card: UIView {
         self.buttonsHandlerDelegate = buttonsHandlerDelegate
         self.networkDelegate = networkDelegate
         
-        self.addSubview(verticalStack)
+        addSubview(verticalStack)
         verticalStack.widthToSuperview(multiplier: 0.9)
         verticalStack.centerInSuperview()
-        verticalStack.addArrangedSubview(upperPlaceholder)
-        verticalStack.addArrangedSubview(sepLine)
-        verticalStack.addArrangedSubview(placeholder)
-        
-        upperPlaceholder.addSubview(cardText)
-        upperPlaceholder.addSubview(settingsButton)
+        [upperPlaceholder, sepLine, placeholder].forEach {verticalStack.addArrangedSubview($0)}
+
+        [cardText, settingsButton].forEach {upperPlaceholder.addSubview($0)}
         upperPlaceholder.widthToSuperview()
         upperPlaceholder.heightToSuperview(multiplier: 0.15)
         
         placeholder.widthToSuperview()
-        placeholder.addSubview(defaultImage)
-        placeholder.addSubview(choiceButton)
-        placeholder.addSubview(errorView)
-
+        [defaultImage, choiceButton, errorView].forEach {placeholder.addSubview($0)}
+        
         defaultImage.centerInSuperview()
         defaultImage.widthToSuperview(offset: -30)
         
-        settingsButton.topToSuperview(offset: 6)
-        settingsButton.rightToSuperview(offset: -10)
+        settingsButton.edgesToSuperview(excluding: [.bottom, .left], insets: TinyEdgeInsets(top: 6, left: 0, bottom: 0, right: 10))
         
         choiceButton.edgesToSuperview(insets: TinyEdgeInsets(top: 130, left: 100, bottom: 30, right: 100))
         
-        cardText.leftToSuperview(offset: 20)
-        cardText.topToSuperview(offset: 7)
+        cardText.edgesToSuperview(excluding: [.bottom, .right], insets: TinyEdgeInsets(top: 7, left: 20, bottom: 0, right: 0))
         
         sepLine.widthToSuperview()
         sepLine.heightToSuperview(multiplier: 0.005)
