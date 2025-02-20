@@ -38,10 +38,13 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
                 guardedSelf.tableView.reloadData()
 
                 
-            case .failure(let error):
-                print("Ошибка криптовалюты: \(error)")
-                self?.networkError = true
-                self?.transmissionDelegate?.saveCryptoList(cryptoList: nil)
+            case .failure(let apiError):
+                switch apiError {
+                case .parcingFailure:
+                    self?.showAlert(title: "Ошибка парсинга криптовалюты", message: "Вероятно превышено количество запросов к API. Попробуйте загрузить список криптовалюты позже.")
+                case .networkError:
+                    self?.showAlert(title: "Ошибка сети", message: "Не получилось получить данные о списке криптовалюты. Вероятно у вас не работает интернет.")
+                }
             }
 
         }

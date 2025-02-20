@@ -71,7 +71,7 @@ class MainViewController: UIViewController {
         let settings = SettingsController()
         settings.transmissionDelegate = self
         settings.cardList = cardStack.getCardOrder()
-        self.navigationController?.pushViewController(settings, animated: true)
+        navigationController?.pushViewController(settings, animated: true)
     }
     
    
@@ -87,7 +87,6 @@ class MainViewController: UIViewController {
             }
         }
     }
-    
 }
 
 
@@ -104,11 +103,14 @@ extension MainViewController: TransmissionDelegate {
     
     
     func saveCryptoList(cryptoList: [Crypto]?) {
-        if (cryptoList != nil) && (cryptoList!.isEmpty == false) {
-            startTimer()
-        } else {
-            cryptoTimer?.invalidate()
-            cryptoTimer = nil
+        if let guardedList = cryptoList {
+            if (guardedList.isEmpty) {
+                cryptoTimer?.invalidate()
+                cryptoTimer = nil
+            }
+            else {
+                startTimer()
+            }
         }
         cardStack.saveCryptoList(cryptoList: cryptoList)
     }
@@ -131,12 +133,15 @@ extension MainViewController: TransmissionDelegate {
                         UserDefaults.standard.set(weatherEncoded, forKey: "weather")
                     }
                 
-                case .failure(let error):
-                    print("Ошибка при попытке получить данные о погоде: \(error)")
-                    self?.showAlert(title: "Ошибка погоды", message: "Текст ошибки \(error)")
-                    // TODO: Дублирование логов
+                case .failure(let apiError):
+                    switch apiError {
+                    case .parcingFailure:
+                        self?.showAlert(title: "Ошибка парсинга погоды", message: "Попробуйте обновить погоду позже")
+                    case .networkError:
+                        self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о погоде. Вероятно у вас не работает интернет.")
+                    }
+                    self?.cardStack.saveWeather(weather: nil)
                 }
-
             }
         default:
             fatalError("lastDelegateUser не был инициализировн")
@@ -171,6 +176,7 @@ extension MainViewController: ButtonsHandlerDelegate {
         cryptoList?.forEach {
             names += "\($0.id.lowercased()),"
         }
+        
         apiHelper.getSelectedCrypto(selectedCrypto: names) { [weak self] result in
             switch result {
             case .success(let cryptos):
@@ -180,32 +186,44 @@ extension MainViewController: ButtonsHandlerDelegate {
                     return modifiedCrypto
                 }
                 self?.cardStack.saveCryptoList(cryptoList: uppercasedCrypto)
-            
-            case .failure(let error):
-                // TODO: Тоже можно доделать (чтобы был респонс)
-                print("Ошибка криптовалюты: \(error)")
-                self?.showAlert(title: "Ошибка парсинга криптовалюты", message: "Вероятно превышено количество запросов. Подождите немного и попробуйте еще раз.")
+                guard let timer = self?.cryptoTimer else {
+                    self?.startTimer()
+                    return
+                }
                 
+            case .failure(let apiError):
+                switch apiError {
+                case .parcingFailure:
+                    break
+                case .networkError:
+                    self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о выбранной криптовалюте. Вероятно у вас не работает интернет.")
+                    self?.cryptoTimer?.invalidate()
+                    self?.cryptoTimer = nil
+                    self?.cardStack.saveCryptoList(cryptoList: nil)
+                }
             }
-            
         }
-            
     }
     
     func reloadWeatherPressed(weather: WeatherModel) {
         let citiesList = JSONReader().loadCitiesFromFile(fileName: "cities")
-        let city = citiesList.first { $0.name == weather.name }!
-        apiHelper.getWeather(latitude: city.latitude, longitude: city.longitude) { [weak self] result in
+        let city = citiesList.first { $0.name == weather.name }
+        guard let guardedCity = city else {return}
+        apiHelper.getWeather(latitude: guardedCity.latitude, longitude: guardedCity.longitude) { [weak self] result in
             switch result {
             
             case .success(var fetchedWeather):
-                fetchedWeather.name = city.name
+                fetchedWeather.name = guardedCity.name
                 self?.cardStack.saveWeather(weather: fetchedWeather)
             
-            case .failure(let error):
-                print("Ошибка при попытке получения данных о погоде")
-                self?.showAlert(title: "Ошибка погоды", message: "Текст ошибки: \(error)")
-                // TODO: Можно добавить алерт
+            case .failure(let apiError):
+                switch apiError {
+                case .parcingFailure:
+                    self?.showAlert(title: "Ошибка парсинга погоды", message: "Попробуйте обновить погоду позже")
+                case .networkError:
+                    self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о погоде. Вероятно у вас не работает интернет.")
+                }
+                self?.cardStack.saveWeather(weather: nil)
             }
         }
     }

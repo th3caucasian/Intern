@@ -7,13 +7,19 @@
 
 import Moya
 
+
+enum APIError: Error {
+    case parcingFailure
+    case networkError
+}
+
 class APIHelper {
     
     static let shared = APIHelper()
     
     private init() {}
     
-    func getAllCrypto(completition: @escaping (Result<[Crypto],Error>) -> Void) {
+    func getAllCrypto(completition: @escaping (Result<[Crypto],APIError>) -> Void) {
         let moyaProvider = MoyaProvider<CryptoAPI>()
         
         moyaProvider.request(.getAllCrypto) { result in
@@ -23,19 +29,19 @@ class APIHelper {
                     let decoded = try JSONDecoder().decode([Crypto].self, from: response.data)
                     completition(.success(decoded))
                 } catch {
-                    completition(.failure(error))
+                    completition(.failure(.parcingFailure))
                     print("Ошибка парсинга Crypto (All): \(error)\nresponse: \(response)")
                 }
             case .failure(let error):
                 print("Ошибка сети \(error.localizedDescription)")
-                completition(.failure(error))
+                completition(.failure(.networkError))
             }
         }
     }
     
     
     
-    func getSelectedCrypto(selectedCrypto: String?, completition: @escaping (Result<[Crypto], Error>) -> Void) {
+    func getSelectedCrypto(selectedCrypto: String?, completition: @escaping (Result<[Crypto], APIError>) -> Void) {
         guard let crypto = selectedCrypto else {
             return
         }
@@ -49,11 +55,11 @@ class APIHelper {
                     completition(.success(decoded))
                 } catch {
                     print("Ошибка парсинга Crypto (Selected): \(error)\nresponse: \(response)")
-                    completition(.failure(error))
+                    completition(.failure(.parcingFailure))
                 }
             case .failure(let error):
                 print("Ошибка сети \(error.localizedDescription)")
-                completition(.failure(error))
+                completition(.failure(.networkError))
             }
         }
         
@@ -61,7 +67,7 @@ class APIHelper {
     
     
     
-    func getWeather(latitude: Double, longitude: Double, completition: @escaping (Result<WeatherModel, Error>) -> Void) {
+    func getWeather(latitude: Double, longitude: Double, completition: @escaping (Result<WeatherModel, APIError>) -> Void) {
         let moyaProvider = MoyaProvider<WeatherAPI>()
         
         moyaProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { result in
@@ -72,11 +78,11 @@ class APIHelper {
                     completition(.success(decoded))
                 } catch {
                     print("Ошибка парсинга Weather\n\(error)\nresponse: \(response)")
-                    completition(.failure(error))
+                    completition(.failure(.parcingFailure))
                 }
             case .failure(let error):
                 print("Ошибка сети \(error.localizedDescription)")
-                completition(.failure(error))
+                completition(.failure(.networkError))
             }
         }
     }
