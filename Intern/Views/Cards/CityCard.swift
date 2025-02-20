@@ -28,13 +28,9 @@ class CityCard: Card {
         }
         cardText.text = "Город"
         defaultImage.image = UIImage(named: "map_bckgrnd")
-        if let city = UserDefaults.standard.data(forKey: "city") {
-            if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
-                setCity(latitude: decodedCity.latitude, longitude: decodedCity.longitude)
-            }
-        }
         cardType = .city
     }
+    
     
     @objc func delegateCityChoicePressed() {
         buttonsHandlerDelegate?.cityChoicePressed(type: DelegateUser.map)

@@ -28,20 +28,10 @@ class CryptoCard: Card {
         }
         cardText.text = "Курс криптовалют"
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
-        placeholder.addSubview(loadingView)
-        loadingView.centerInSuperview()
-        loadingView.isHidden = true
         errorView.addTarget(self, action: #selector(reloadCrypto), for: .touchUpInside)
         errorView.setTitle("При загрузке произошла ошибка", for: .normal)
-        if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
-            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
-                loadingView.isHidden = false
-                [defaultImage, choiceButton].forEach {$0.isHidden = true}
-                loadingView.startAnimating()
-                buttonsHandlerDelegate?.reloadCryptoPressed(cryptoList: decodedList)
-            }
-        }
         cardType = .crypto
+        startLoading()
     }
     
     @objc func delegateCryptoPressed() {

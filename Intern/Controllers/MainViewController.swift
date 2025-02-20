@@ -35,6 +35,7 @@ class MainViewController: UIViewController {
         view.addSubview(cardStack)
         cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 20, left: 0, bottom: 20, right: 0), usingSafeArea: true)
         cardStack.setupView()
+        loadSavedInfo()
         startTimer()
     }
     
@@ -186,9 +187,8 @@ extension MainViewController: ButtonsHandlerDelegate {
                     return modifiedCrypto
                 }
                 self?.cardStack.saveCryptoList(cryptoList: uppercasedCrypto)
-                guard let timer = self?.cryptoTimer else {
+                if self?.cryptoTimer == nil {
                     self?.startTimer()
-                    return
                 }
                 
             case .failure(let apiError):
@@ -247,15 +247,23 @@ extension UIViewController {
 // TODO: Реализовать после смены архитектуры АПИ (загрузка данных и отправление их в глупи картинка)
 extension MainViewController {
     func loadSavedInfo() {
-        if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
-            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
-                reloadCryptoPressed(cryptoList: decodedList)
+        if let city = UserDefaults.standard.data(forKey: "city") {
+            if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
+                cardStack.saveCity(city: decodedCity)
             }
         }
+        
         
         if let weather = UserDefaults.standard.data(forKey: "weather") {
             if let decodedWeather = try? JSONDecoder().decode(WeatherModel.self, from: weather) {
                 reloadWeatherPressed(weather: decodedWeather)
+            }
+        }
+        
+        
+        if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
+            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
+                reloadCryptoPressed(cryptoList: decodedList)
             }
         }
     }

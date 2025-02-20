@@ -139,7 +139,7 @@ class Card: UIView {
         upperPlaceholder.heightToSuperview(multiplier: 0.15)
         
         placeholder.widthToSuperview()
-        [defaultImage, choiceButton, errorView].forEach {placeholder.addSubview($0)}
+        [defaultImage, choiceButton, errorView, loadingView].forEach {placeholder.addSubview($0)}
         
         defaultImage.centerInSuperview()
         defaultImage.widthToSuperview(offset: -30)
@@ -156,6 +156,17 @@ class Card: UIView {
         errorView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
         errorView.isHidden = true
         
+        loadingView.centerInSuperview()
+        loadingView.isHidden = true
     }
     
+    func startLoading() {
+        loadingView.isHidden = false
+        [defaultImage, choiceButton].forEach {$0.isHidden = true}
+        loadingView.startAnimating()
+    }
+    
+    func stopLoading() {
+        
+    }
 }
