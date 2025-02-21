@@ -15,7 +15,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     private var cryptoList: [Crypto] = []
     private var filteredList: [Crypto] = []
     var selectedCrypto: [Crypto] = []
-    weak var transmissionDelegate: TransmissionDelegate?
+    weak var transmissionDelegate: InfoReceiverDelegate?
     private var networkError = false
     
     

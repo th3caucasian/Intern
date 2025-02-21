@@ -20,23 +20,15 @@ class CryptoCard: Card {
     }()
 
     
-    override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?) {
-        super.setupView(buttonsHandlerDelegate)
-        
-        [choiceButton, settingsButton].forEach {
-            $0.addTarget(self, action: #selector(delegateCryptoPressed), for: .touchUpInside)
-        }
+    override func setupView() {
+        super.setupView()
         cardText.text = "Курс криптовалют"
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
-        errorView.addTarget(self, action: #selector(reloadCrypto), for: .touchUpInside)
         errorView.setTitle("При загрузке произошла ошибка", for: .normal)
         cardType = .crypto
         startLoading()
     }
     
-    @objc func delegateCryptoPressed() {
-        buttonsHandlerDelegate?.cryptoChoicePressed()
-    }
     
     // Вызывается при установке списка криптовалюты
     func setCrypto(cryptos: [Crypto]?) {
@@ -77,16 +69,4 @@ class CryptoCard: Card {
             errorView.isHidden = false
         }
     }
-    
-    @objc func reloadCrypto() {
-        if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
-            if let decodedCryptos = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
-                errorView.isHidden = true
-                loadingView.isHidden = false
-                loadingView.startAnimating()
-                buttonsHandlerDelegate?.reloadCryptoPressed(cryptoList: decodedCryptos)
-            }
-        }
-    }
-    
 }

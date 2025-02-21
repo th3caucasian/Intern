@@ -9,18 +9,15 @@ import UIKit
 import TinyConstraints
 import Moya
 
-enum DelegateUser {
+enum CitiesListUser {
     case map, weather
 }
 
-enum CryptoQueryType {
-    case all, selected
-}
 
 // Контроллер главного экрана с карточками
 class MainViewController: UIViewController {
     
-    private var lastDelegateUser: DelegateUser?
+    private var lastCitiesListUser: CitiesListUser?
     private var cryptoTimer: Timer?
     private var apiHelper = APIHelper.shared
     private let cityCard = CityCard()
@@ -41,15 +38,9 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemGray5
         setupNavigationBar()
-        
-//        cardStack.buttonsHandlerDelegate = self
-//        view.addSubview(cardStack)
-//        cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 20, left: 0, bottom: 20, right: 0), usingSafeArea: true)
-//        cardStack.setupView()
         setupStack()
-
-        
         loadSavedInfo()
+        activateButtonsHandler()
         startTimer()
     }
     
@@ -90,32 +81,20 @@ class MainViewController: UIViewController {
     }
     
    
-    
     func startTimer() {
-        cryptoTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(reloadCryptoByTimer), userInfo: nil, repeats: true)
+        cryptoTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(reloadCryptoPressed), userInfo: nil, repeats: true)
     }
-    
-    @objc func reloadCryptoByTimer() {
-        if let list = UserDefaults.standard.data(forKey: "cryptoList") {
-            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: list) {
-                reloadCryptoPressed(cryptoList: decodedList)
-            }
-        }
-    }
-    
-    
-   
 }
 
 
-
+// Методы для настройки и работы с CardStack
 extension MainViewController {
-    func setupStack() {
+    private func setupStack() {
         view.addSubview(cardStack)
         cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 20, left: 0, bottom: 20, right: 0), usingSafeArea: true)
-        [cityCard, weatherCard, cryptoCard].forEach{
+        [cityCard, weatherCard, cryptoCard].forEach {
             cardStack.addArrangedSubview($0)
-            $0.setupView(self)
+            $0.setupView()
         }
         
         if let savedOrder = UserDefaults.standard.data(forKey: "cardsOrder") {
@@ -125,7 +104,7 @@ extension MainViewController {
         }
     }
     
-    func reorderCards(newOrder: [CardType]) {
+    private func reorderCards(newOrder: [CardType]) {
         for i in newOrder.indices {
             switch newOrder[i] {
             case .city:
@@ -143,7 +122,7 @@ extension MainViewController {
         }
     }
     
-    func getCardOrder() -> [CardType] {
+    private func getCardOrder() -> [CardType] {
         var tempList: [CardType] = []
         let cards = cardStack.arrangedSubviews as? [Card]
         cards?.forEach {
@@ -154,9 +133,24 @@ extension MainViewController {
 }
 
 
-extension MainViewController: TransmissionDelegate {
-    
-    func infoReceived(cardsOrder: [CardType]) {
+
+// Расширение добавляет метод подгрузки сохраненной инфы
+extension MainViewController {
+    private func loadSavedInfo() {
+        if let city = UserDefaults.standard.data(forKey: "city") {
+            if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
+                cityCard.setCity(latitude: decodedCity.latitude, longitude: decodedCity.longitude)
+            }
+        }
+        reloadWeatherPressed()
+        reloadCryptoPressed()
+    }
+}
+
+
+
+extension MainViewController: InfoReceiverDelegate {
+    func cardOrderChanged(cardsOrder: [CardType]) {
         if cardsOrder != getCardOrder() {
             reorderCards(newOrder: cardsOrder)
         }
@@ -174,7 +168,7 @@ extension MainViewController: TransmissionDelegate {
     
 
     func saveCity(city: City) {
-        switch lastDelegateUser {
+        switch lastCitiesListUser {
         case .map:
             cityCard.setCity(latitude: city.latitude, longitude: city.longitude)
             if let cityEncoded = try? JSONEncoder().encode(city) {
@@ -208,62 +202,60 @@ extension MainViewController: TransmissionDelegate {
 
 
 
-extension MainViewController: ButtonsHandlerDelegate {
-    
-    func cityChoicePressed(type: DelegateUser) {
-        lastDelegateUser = type
-        let citiesList = CitiesListController()
-        citiesList.transmissionDelegate = self
-        self.navigationController?.pushViewController(citiesList, animated: true)
-    }
-    
-    func cryptoChoicePressed() {
-        let cryptoList = CryptoListController()
-        cryptoList.transmissionDelegate = self
-        self.navigationController?.pushViewController(cryptoList, animated: true)
-        cryptoTimer?.invalidate()
-        cryptoTimer = nil
-    }
-    
-    func reloadCryptoPressed(cryptoList: [Crypto]?) {
-        guard let guardedCrypto = cryptoList else { return }
-        if guardedCrypto.isEmpty {
-            cryptoCard.setCrypto(cryptos: [])
-            return
-        }
-        var names: String = ""
-        cryptoList?.forEach {
-            names += "\($0.id.lowercased()),"
+extension MainViewController {
+    private func activateButtonsHandler() {
+        cityCard.handleAction = { [weak self] action in
+            switch action {
+            case .selectPressed:
+                self?.selectCityPressed()
+            default:
+                break
+            }
         }
         
-        apiHelper.getSelectedCrypto(selectedCrypto: names) { [weak self] result in
-            switch result {
-            case .success(let cryptos):
-                let uppercasedCrypto = cryptos.map { crypto in
-                    var modifiedCrypto = crypto
-                    modifiedCrypto.id = crypto.id.prefix(1).uppercased() + crypto.id.dropFirst()
-                    return modifiedCrypto
-                }
-                self?.cryptoCard.setCrypto(cryptos: uppercasedCrypto)
-                if self?.cryptoTimer == nil {
-                    self?.startTimer()
-                }
-                
-            case .failure(let apiError):
-                switch apiError {
-                case .parcingFailure:
-                    break
-                case .networkError:
-                    self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о выбранной криптовалюте. Вероятно у вас не работает интернет.")
-                    self?.cryptoTimer?.invalidate()
-                    self?.cryptoTimer = nil
-                    self?.cryptoCard.setCrypto(cryptos: nil)
-                }
+        weatherCard.handleAction = { [weak self] action in
+            switch action {
+            case .selectPressed:
+                self?.selectWeatherPressed()
+            case .reloadPressed:
+                self?.reloadWeatherPressed()
+            }
+        }
+        
+        cryptoCard.handleAction = { [weak self] action in
+            switch action {
+            case .selectPressed:
+                self?.selectCryptoPressed()
+            case .reloadPressed:
+                self?.reloadCryptoPressed()
             }
         }
     }
     
-    func reloadWeatherPressed(weather: WeatherModel) {
+    
+    private func selectCityPressed() {
+        let citiesList = CitiesListController()
+        citiesList.transmissionDelegate = self
+        lastCitiesListUser = .map
+        self.navigationController?.pushViewController(citiesList, animated: true)
+    }
+    
+    private func selectWeatherPressed() {
+        let citiesList = CitiesListController()
+        citiesList.transmissionDelegate = self
+        lastCitiesListUser = .weather
+        self.navigationController?.pushViewController(citiesList, animated: true)
+    }
+    
+    private func reloadWeatherPressed() {
+        guard let encodedWeather = UserDefaults.standard.data(forKey: "weather") else {
+            print("Значение weather не было найдено в UserDefaults")
+            return
+        }
+        guard let weather = try? JSONDecoder().decode(WeatherModel.self, from: encodedWeather) else {
+            print("Не удалось декодировать информацию в WeatherModel")
+            return
+        }
         let citiesList = JSONReader().loadCitiesFromFile(fileName: "cities")
         let city = citiesList.first { $0.name == weather.name }
         guard let guardedCity = city else {return}
@@ -286,30 +278,58 @@ extension MainViewController: ButtonsHandlerDelegate {
         }
     }
     
-}
-
-
-extension MainViewController {
-    func loadSavedInfo() {
-        if let city = UserDefaults.standard.data(forKey: "city") {
-            if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
-                cityCard.setCity(latitude: decodedCity.latitude, longitude: decodedCity.longitude)
-            }
+    private func selectCryptoPressed() {
+        let cryptoList = CryptoListController()
+        cryptoList.transmissionDelegate = self
+        self.navigationController?.pushViewController(cryptoList, animated: true)
+        cryptoTimer?.invalidate()
+        cryptoTimer = nil
+    }
+    
+    @objc private func reloadCryptoPressed() {
+        guard let encodedCrypto = UserDefaults.standard.data(forKey: "cryptoList") else {
+            print("Значение cryptoList не было найдено в UserDefaults")
+            return
         }
-        
-        
-        if let weather = UserDefaults.standard.data(forKey: "weather") {
-            if let decodedWeather = try? JSONDecoder().decode(WeatherModel.self, from: weather) {
-                reloadWeatherPressed(weather: decodedWeather)
-            }
+        guard let cryptoList = try? JSONDecoder().decode([Crypto].self, from: encodedCrypto) else {
+            print("Не удалось декодироваться информацию в Crypto")
+            return
         }
-        
-        
-        if let cryptoList = UserDefaults.standard.data(forKey: "cryptoList") {
-            if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptoList) {
-                reloadCryptoPressed(cryptoList: decodedList)
+        if cryptoList.isEmpty {
+            cryptoCard.setCrypto(cryptos: [])
+            return
+        }
+        var names: String = ""
+        cryptoList.forEach {
+            names += "\($0.id.lowercased()),"
+        }
+
+        apiHelper.getSelectedCrypto(selectedCrypto: names) { [weak self] result in
+            switch result {
+            case .success(let cryptos):
+                let uppercasedCrypto = cryptos.map { crypto in
+                    var modifiedCrypto = crypto
+                    modifiedCrypto.id = crypto.id.prefix(1).uppercased() + crypto.id.dropFirst()
+                    return modifiedCrypto
+                }
+                self?.cryptoCard.setCrypto(cryptos: uppercasedCrypto)
+                if self?.cryptoTimer == nil {
+                    self?.startTimer()
+                }
+
+            case .failure(let apiError):
+                switch apiError {
+                case .parcingFailure:
+                    break
+                case .networkError:
+                    self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о выбранной криптовалюте. Вероятно у вас не работает интернет.")
+                    self?.cryptoTimer?.invalidate()
+                    self?.cryptoTimer = nil
+                    self?.cryptoCard.setCrypto(cryptos: nil)
+                }
             }
         }
     }
 }
+
 

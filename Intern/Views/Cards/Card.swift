@@ -15,19 +15,24 @@ enum CardType: String, Codable {
     case crypto = "Курс криптовалют"
 }
 
+enum Action {
+    case selectPressed
+    case reloadPressed
+}
+
 // Вью одной карточки
 class Card: UIView {
     
     var choice = false
     var cardType = CardType.unknown
-    weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
-    
+    var handleAction: ((Action) -> Void)?
     
     let settingsButton: UIButton = {
         let button = UIButton(type: .system)
         let image = UIImage(named: "settings")
         button.setImage(image, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+//        button.addTarget(Card.self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -45,6 +50,7 @@ class Card: UIView {
         button.layer.shadowOpacity = 0.15
         button.layer.masksToBounds = false
         button.translatesAutoresizingMaskIntoConstraints = false
+//        button.addTarget(Card.self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -115,6 +121,7 @@ class Card: UIView {
         button.layer.cornerRadius = 20
         button.titleLabel?.numberOfLines = 2
         button.titleLabel?.textAlignment = .center
+//        button.addTarget(Card.self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -127,8 +134,7 @@ class Card: UIView {
     }()
     
     
-    func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?) {
-        self.buttonsHandlerDelegate = buttonsHandlerDelegate
+    func setupView() {
         
         addSubview(verticalStack)
         verticalStack.widthToSuperview(multiplier: 0.9)
@@ -146,8 +152,10 @@ class Card: UIView {
         defaultImage.widthToSuperview(offset: -30)
         
         settingsButton.edgesToSuperview(excluding: [.bottom, .left], insets: TinyEdgeInsets(top: 6, left: 0, bottom: 0, right: 10))
+        settingsButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         
         choiceButton.edgesToSuperview(insets: TinyEdgeInsets(top: 130, left: 100, bottom: 30, right: 100))
+        choiceButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         
         cardText.edgesToSuperview(excluding: [.bottom, .right], insets: TinyEdgeInsets(top: 7, left: 20, bottom: 0, right: 0))
         
@@ -155,19 +163,34 @@ class Card: UIView {
         sepLine.heightToSuperview(multiplier: 0.005)
         
         errorView.edgesToSuperview(insets: TinyEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
+        errorView.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         errorView.isHidden = true
-        
         loadingView.centerInSuperview()
         loadingView.isHidden = true
+        
+
+
+
     }
     
     func startLoading() {
         loadingView.isHidden = false
-        [defaultImage, choiceButton].forEach {$0.isHidden = true}
+        [defaultImage, choiceButton, errorView].forEach {$0.isHidden = true}
         loadingView.startAnimating()
     }
     
-    func stopLoading() {
-        
+    @objc func buttonPressed(_ sender: UIButton) {
+        switch sender {
+        case choiceButton:
+            fallthrough
+        case settingsButton:
+            handleAction?(.selectPressed)
+        case errorView:
+            startLoading()
+            handleAction?(.reloadPressed)
+        default:
+            print("Функция была вызвана из неожиданного состояния")
+        }
+
     }
 }

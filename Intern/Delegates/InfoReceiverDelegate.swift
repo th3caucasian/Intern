@@ -6,10 +6,10 @@
 //
 
 
-protocol TransmissionDelegate: AnyObject {
+protocol InfoReceiverDelegate: AnyObject {
     
     // Метод сохранения порядка карточек
-    func infoReceived(cardsOrder: [CardType])
+    func cardOrderChanged(cardsOrder: [CardType])
     
     // Метод сохранения города (и для карты и для погоды)
     func saveCity(city: City)

@@ -20,20 +20,11 @@ class CityCard: Card {
         return map
     }()
     
-    override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?) {
-        super.setupView(buttonsHandlerDelegate)
-        
-        [choiceButton, settingsButton].forEach {
-            $0.addTarget(self, action: #selector(delegateCityChoicePressed), for: .touchUpInside)
-        }
+    override func setupView() {
+        super.setupView()
         cardText.text = "Город"
         defaultImage.image = UIImage(named: "map_bckgrnd")
         cardType = .city
-    }
-    
-    
-    @objc func delegateCityChoicePressed() {
-        buttonsHandlerDelegate?.cityChoicePressed(type: DelegateUser.map)
     }
     
     
@@ -53,6 +44,4 @@ class CityCard: Card {
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
     }
-    
-
 }

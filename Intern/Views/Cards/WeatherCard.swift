@@ -12,26 +12,16 @@ class WeatherCard: Card {
     
     private let weatherView = WeatherView()
     
-    
-    override func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?) {
-        super.setupView(buttonsHandlerDelegate)
-        
-        [choiceButton, settingsButton].forEach {
-            $0.addTarget(self, action: #selector(delegateWeatherPressed), for: .touchUpInside)
-        }
+    override func setupView() {
+        super.setupView()
         cardText.text = "Погода"
         defaultImage.image = UIImage(named: "weather_bckgrnd")
         weatherView.setupView()
-        errorView.addTarget(self, action: #selector(reloadWeather), for: .touchUpInside)
         errorView.setTitle("При загрузке погоды произошла ошибка", for: .normal)
         cardType = .weather
         startLoading()
     }
     
-    
-    @objc func delegateWeatherPressed() {
-        buttonsHandlerDelegate?.cityChoicePressed(type: DelegateUser.weather)
-    }
     
     // Вызывается при установке города для погоды
     func setWeather(weatherModel: WeatherModel?) {
@@ -65,17 +55,4 @@ class WeatherCard: Card {
             weatherView.isHidden = true
         }
     }
-    
-    
-    @objc func reloadWeather() {
-        if let weather = UserDefaults.standard.data(forKey: "weather") {
-            if let decodedWeather = try? JSONDecoder().decode(WeatherModel.self, from: weather) {
-                errorView.isHidden = true
-                loadingView.isHidden = false
-                loadingView.startAnimating()
-                buttonsHandlerDelegate?.reloadWeatherPressed(weather: decodedWeather)
-            }
-        }
-    }
-    
 }

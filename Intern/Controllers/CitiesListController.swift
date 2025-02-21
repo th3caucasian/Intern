@@ -12,7 +12,7 @@ class CitiesListController: ListViewController {
     
     private var citiesList: [City] = []
     private var filteredList: [City] = []
-    weak var transmissionDelegate: TransmissionDelegate?
+    weak var transmissionDelegate: InfoReceiverDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()

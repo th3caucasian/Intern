@@ -11,7 +11,7 @@ import TinyConstraints
 // Контроллер экрана настроек (перестановка карточек)
 class SettingsController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-    weak var transmissionDelegate: TransmissionDelegate?
+    weak var transmissionDelegate: InfoReceiverDelegate?
     var cardList: [CardType] = []
     
     var tableView: UITableView = {
@@ -60,7 +60,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     @objc func buttonSavePressed() {
-        transmissionDelegate?.infoReceived(cardsOrder: cardList)
+        transmissionDelegate?.cardOrderChanged(cardsOrder: cardList)
         if let encodedList = try? JSONEncoder().encode(cardList) {
             UserDefaults.standard.set(encodedList, forKey: "cardsOrder")
         }
