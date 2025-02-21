@@ -22,7 +22,7 @@ class Card: UIView {
     var cardType = CardType.unknown
     weak var buttonsHandlerDelegate: ButtonsHandlerDelegate?
     
-
+    
     let settingsButton: UIButton = {
         let button = UIButton(type: .system)
         let image = UIImage(named: "settings")
@@ -65,12 +65,12 @@ class Card: UIView {
         return imageView
     }()
     
-
+    
     private let verticalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .leading
-        stack.distribution = .fill  
+        stack.distribution = .fill
         stack.backgroundColor = .white
         stack.layer.cornerRadius = 20
         stack.layer.shadowColor = UIColor.black.cgColor
@@ -125,7 +125,8 @@ class Card: UIView {
         indicator.hidesWhenStopped = true
         return indicator
     }()
-
+    
+    
     func setupView(_ buttonsHandlerDelegate: ButtonsHandlerDelegate?) {
         self.buttonsHandlerDelegate = buttonsHandlerDelegate
         

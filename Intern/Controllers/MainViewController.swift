@@ -20,10 +20,21 @@ enum CryptoQueryType {
 // Контроллер главного экрана с карточками
 class MainViewController: UIViewController {
     
-    private var cardStack = CardStack(frame: UIScreen.main.bounds)
     private var lastDelegateUser: DelegateUser?
     private var cryptoTimer: Timer?
     private var apiHelper = APIHelper.shared
+    private let cityCard = CityCard()
+    private let weatherCard = WeatherCard()
+    private let cryptoCard = CryptoCard()
+    
+    private let cardStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.distribution = .fillEqually
+        stack.spacing = 10
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
 
 
     override func viewDidLoad() {
@@ -31,10 +42,13 @@ class MainViewController: UIViewController {
         view.backgroundColor = .systemGray5
         setupNavigationBar()
         
-        cardStack.buttonsHandlerDelegate = self
-        view.addSubview(cardStack)
-        cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 20, left: 0, bottom: 20, right: 0), usingSafeArea: true)
-        cardStack.setupView()
+//        cardStack.buttonsHandlerDelegate = self
+//        view.addSubview(cardStack)
+//        cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 20, left: 0, bottom: 20, right: 0), usingSafeArea: true)
+//        cardStack.setupView()
+        setupStack()
+
+        
         loadSavedInfo()
         startTimer()
     }
@@ -71,7 +85,7 @@ class MainViewController: UIViewController {
     @objc func buttonEditPressed() {
         let settings = SettingsController()
         settings.transmissionDelegate = self
-        settings.cardList = cardStack.getCardOrder()
+        settings.cardList = getCardOrder()
         navigationController?.pushViewController(settings, animated: true)
     }
     
@@ -88,18 +102,64 @@ class MainViewController: UIViewController {
             }
         }
     }
+    
+    
+   
 }
 
 
+
+extension MainViewController {
+    func setupStack() {
+        view.addSubview(cardStack)
+        cardStack.edgesToSuperview(insets: TinyEdgeInsets(top: 20, left: 0, bottom: 20, right: 0), usingSafeArea: true)
+        [cityCard, weatherCard, cryptoCard].forEach{
+            cardStack.addArrangedSubview($0)
+            $0.setupView(self)
+        }
+        
+        if let savedOrder = UserDefaults.standard.data(forKey: "cardsOrder") {
+            if let decodedOrder = try? JSONDecoder().decode([CardType].self, from: savedOrder) {
+                reorderCards(newOrder: decodedOrder)
+            }
+        }
+    }
+    
+    func reorderCards(newOrder: [CardType]) {
+        for i in newOrder.indices {
+            switch newOrder[i] {
+            case .city:
+                cityCard.removeFromSuperview()
+                cardStack.insertArrangedSubview(cityCard, at: i)
+            case .weather:
+                weatherCard.removeFromSuperview()
+                cardStack.insertArrangedSubview(weatherCard, at: i)
+            case .crypto:
+                cryptoCard.removeFromSuperview()
+                cardStack.insertArrangedSubview(cryptoCard, at: i)
+            default:
+                fatalError("Неверный элемент в массиве-параметре метода")
+            }
+        }
+    }
+    
+    func getCardOrder() -> [CardType] {
+        var tempList: [CardType] = []
+        let cards = cardStack.arrangedSubviews as? [Card]
+        cards?.forEach {
+            tempList.append($0.cardType) }
+        return tempList
+    }
+    
+}
 
 
 extension MainViewController: TransmissionDelegate {
     
     func infoReceived(cardsOrder: [CardType]) {
-        if cardsOrder != cardStack.getCardOrder() {
-            cardStack.reorder(newOrder: cardsOrder)
+        if cardsOrder != getCardOrder() {
+            reorderCards(newOrder: cardsOrder)
         }
-        cardStack.reorder(newOrder: cardsOrder)
     }
     
     
@@ -109,14 +169,14 @@ extension MainViewController: TransmissionDelegate {
                 startTimer()
             }
         }
-        cardStack.saveCryptoList(cryptoList: cryptoList)
+        cryptoCard.setCrypto(cryptos: cryptoList)
     }
     
 
     func saveCity(city: City) {
         switch lastDelegateUser {
         case .map:
-            cardStack.saveCity(city: city)
+            cityCard.setCity(latitude: city.latitude, longitude: city.longitude)
             if let cityEncoded = try? JSONEncoder().encode(city) {
                 UserDefaults.standard.set(cityEncoded, forKey: "city")
             }
@@ -125,7 +185,7 @@ extension MainViewController: TransmissionDelegate {
                 switch result {
                 case .success(var weather):
                     weather.name = city.name
-                    self?.cardStack.saveWeather(weather: weather)
+                    self?.weatherCard.setWeather(weatherModel: weather)
                     if let weatherEncoded = try? JSONEncoder().encode(weather) {
                         UserDefaults.standard.set(weatherEncoded, forKey: "weather")
                     }
@@ -137,7 +197,7 @@ extension MainViewController: TransmissionDelegate {
                     case .networkError:
                         self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о погоде. Вероятно у вас не работает интернет.")
                     }
-                    self?.cardStack.saveWeather(weather: nil)
+                    self?.weatherCard.setWeather(weatherModel: nil)
                 }
             }
         default:
@@ -168,7 +228,7 @@ extension MainViewController: ButtonsHandlerDelegate {
     func reloadCryptoPressed(cryptoList: [Crypto]?) {
         guard let guardedCrypto = cryptoList else { return }
         if guardedCrypto.isEmpty {
-            cardStack.saveCryptoList(cryptoList: [])
+            cryptoCard.setCrypto(cryptos: [])
             return
         }
         var names: String = ""
@@ -184,7 +244,7 @@ extension MainViewController: ButtonsHandlerDelegate {
                     modifiedCrypto.id = crypto.id.prefix(1).uppercased() + crypto.id.dropFirst()
                     return modifiedCrypto
                 }
-                self?.cardStack.saveCryptoList(cryptoList: uppercasedCrypto)
+                self?.cryptoCard.setCrypto(cryptos: uppercasedCrypto)
                 if self?.cryptoTimer == nil {
                     self?.startTimer()
                 }
@@ -197,7 +257,7 @@ extension MainViewController: ButtonsHandlerDelegate {
                     self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о выбранной криптовалюте. Вероятно у вас не работает интернет.")
                     self?.cryptoTimer?.invalidate()
                     self?.cryptoTimer = nil
-                    self?.cardStack.saveCryptoList(cryptoList: nil)
+                    self?.cryptoCard.setCrypto(cryptos: nil)
                 }
             }
         }
@@ -212,7 +272,7 @@ extension MainViewController: ButtonsHandlerDelegate {
             
             case .success(var fetchedWeather):
                 fetchedWeather.name = guardedCity.name
-                self?.cardStack.saveWeather(weather: fetchedWeather)
+                self?.weatherCard.setWeather(weatherModel: fetchedWeather)
             
             case .failure(let apiError):
                 switch apiError {
@@ -221,7 +281,7 @@ extension MainViewController: ButtonsHandlerDelegate {
                 case .networkError:
                     self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о погоде. Вероятно у вас не работает интернет.")
                 }
-                self?.cardStack.saveWeather(weather: nil)
+                self?.weatherCard.setWeather(weatherModel: nil)
             }
         }
     }
@@ -233,7 +293,7 @@ extension MainViewController {
     func loadSavedInfo() {
         if let city = UserDefaults.standard.data(forKey: "city") {
             if let decodedCity = try? JSONDecoder().decode(City.self, from: city) {
-                cardStack.saveCity(city: decodedCity)
+                cityCard.setCity(latitude: decodedCity.latitude, longitude: decodedCity.longitude)
             }
         }
         

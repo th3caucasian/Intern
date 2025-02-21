@@ -46,14 +46,14 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
                     self?.showAlert(title: "Ошибка сети", message: "Не получилось получить данные о списке криптовалюты. Вероятно у вас не работает интернет.")
                 }
             }
-
         }
+        
         if let cryptos = UserDefaults.standard.data(forKey: "cryptoList") {
             if let decodedList = try? JSONDecoder().decode([Crypto].self, from: cryptos) {
                 decodedList.forEach { crypto in
                     selectedCrypto.append(crypto)
-                    }
                 }
+            }
         }
         title = "Выбор криптовалюты"
     }
