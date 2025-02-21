@@ -148,7 +148,7 @@ extension MainViewController {
 }
 
 
-
+// Добавление соответствия протоколу
 extension MainViewController: InfoReceiverDelegate {
     func cardOrderChanged(cardsOrder: [CardType]) {
         if cardsOrder != getCardOrder() {
@@ -201,7 +201,7 @@ extension MainViewController: InfoReceiverDelegate {
 }
 
 
-
+// Добавление метода настройки обработчиков нажатия кнопок в Card
 extension MainViewController {
     private func activateButtonsHandler() {
         cityCard.handleAction = { [weak self] action in

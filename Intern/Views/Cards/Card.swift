@@ -32,7 +32,6 @@ class Card: UIView {
         let image = UIImage(named: "settings")
         button.setImage(image, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-//        button.addTarget(Card.self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -50,7 +49,6 @@ class Card: UIView {
         button.layer.shadowOpacity = 0.15
         button.layer.masksToBounds = false
         button.translatesAutoresizingMaskIntoConstraints = false
-//        button.addTarget(Card.self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -121,7 +119,6 @@ class Card: UIView {
         button.layer.cornerRadius = 20
         button.titleLabel?.numberOfLines = 2
         button.titleLabel?.textAlignment = .center
-//        button.addTarget(Card.self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -167,18 +164,16 @@ class Card: UIView {
         errorView.isHidden = true
         loadingView.centerInSuperview()
         loadingView.isHidden = true
-        
-
-
-
     }
     
+    // Метод отображающий вьюшку загрузки
     func startLoading() {
         loadingView.isHidden = false
         [defaultImage, choiceButton, errorView].forEach {$0.isHidden = true}
         loadingView.startAnimating()
     }
     
+    // Передача типа нажатой кнопки в обработчик
     @objc func buttonPressed(_ sender: UIButton) {
         switch sender {
         case choiceButton:
