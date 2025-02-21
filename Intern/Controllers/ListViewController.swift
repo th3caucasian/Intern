@@ -13,7 +13,7 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     private let rowHeight: CGFloat = 55
     private var mainList: [String] = []
-    var searchController: UISearchController!
+    var searchController = UISearchController(searchResultsController: nil)
     
     var tableView: UITableView = {
         let tableView = UITableView()
@@ -37,7 +37,6 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         view.addSubview(tableView)
         tableView.edgesToSuperview()
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(toggleSearch))
-        searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Поиск"

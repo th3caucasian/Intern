@@ -13,8 +13,8 @@ class WeatherView: UIView {
     
     private var cityText = ViewBuilder.createLabel(font: .systemFont(ofSize: 25, weight: .bold), text: "")
     private var weatherText = ViewBuilder.createTextLabel(text: "")
-    private var temperatureValue = ViewBuilder.createLabel(font: .systemFont(ofSize: 25, weight: .bold), text: "")
-    private var feelsLikeValue = ViewBuilder.createValueLabel(text: "")
+    private var temperatureValue = ViewBuilder.createLabel(font: .systemFont(ofSize: 22, weight: .bold), text: "")
+    private var feelsLikeValue = ViewBuilder.createLabel(font: .systemFont(ofSize: 13, weight: .bold), text: "")
     private var windValue = ViewBuilder.createValueLabel(text: "")
     private var pressureValue = ViewBuilder.createValueLabel(text: "")
     private var humidityValue = ViewBuilder.createValueLabel(text: "")
@@ -83,7 +83,7 @@ class WeatherView: UIView {
         temperatureValue.bottomToSuperview(offset: -60)
         temperatureValue.rightToLeft(of: pressureText, offset: -5)
         
-        feelsLikeText.edgesToSuperview(excluding: [.top, .right], insets: TinyEdgeInsets(top: 0, left: 12, bottom: 12, right: 0))
+        feelsLikeText.edgesToSuperview(excluding: [.top, .right], insets: TinyEdgeInsets(top: 0, left: 12, bottom: 10, right: 0))
         feelsLikeValue.rightToLeft(of: visibilityText, offset: -5)
         feelsLikeValue.bottomToSuperview(offset: -10)
         

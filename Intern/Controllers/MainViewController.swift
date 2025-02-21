@@ -105,11 +105,7 @@ extension MainViewController: TransmissionDelegate {
     
     func saveCryptoList(cryptoList: [Crypto]?) {
         if let guardedList = cryptoList {
-            if (guardedList.isEmpty) {
-                cryptoTimer?.invalidate()
-                cryptoTimer = nil
-            }
-            else {
+            if !guardedList.isEmpty {
                 startTimer()
             }
         }
@@ -165,6 +161,8 @@ extension MainViewController: ButtonsHandlerDelegate {
         let cryptoList = CryptoListController()
         cryptoList.transmissionDelegate = self
         self.navigationController?.pushViewController(cryptoList, animated: true)
+        cryptoTimer?.invalidate()
+        cryptoTimer = nil
     }
     
     func reloadCryptoPressed(cryptoList: [Crypto]?) {
@@ -231,20 +229,6 @@ extension MainViewController: ButtonsHandlerDelegate {
 }
 
 
-
-
-
-extension UIViewController {
-    func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
-        self.present(alert, animated: true)
-    }
-}
-
-
-
-// TODO: Реализовать после смены архитектуры АПИ (загрузка данных и отправление их в глупи картинка)
 extension MainViewController {
     func loadSavedInfo() {
         if let city = UserDefaults.standard.data(forKey: "city") {

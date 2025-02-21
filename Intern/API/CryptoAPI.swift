@@ -23,7 +23,7 @@ enum CryptoAPI: TargetType {
             return "/coins/markets"
         }
     }
-    
+        
     var method: Moya.Method {
         return .get
     }

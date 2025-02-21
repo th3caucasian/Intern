@@ -43,7 +43,11 @@ class CitiesListController: ListViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! CustomCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as? CustomCell else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+            print("Не удалось преобразовать cell в CustomCell")
+            return cell
+        }
         let item = navigationItem.searchController != nil ? filteredList[indexPath.row] : citiesList[indexPath.row]
         cell.leftLabel.text = item.abbreviation
         cell.mainLabel.text = item.name

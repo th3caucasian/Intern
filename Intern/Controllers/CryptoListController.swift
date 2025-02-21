@@ -72,7 +72,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if self.isMovingFromParent && !networkError {
+        if (self.isMovingFromParent && !networkError) {
             transmissionDelegate?.saveCryptoList(cryptoList: selectedCrypto)
             if let cryptosEncoded = try? JSONEncoder().encode(selectedCrypto) {
                 UserDefaults.standard.set(cryptosEncoded, forKey: "cryptoList")
@@ -125,7 +125,8 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
         let row = sender.tag
         
         if (sender.isSelected) {
-            selectedCrypto.remove(at: selectedCrypto.firstIndex(where: { cryptoList[row].id == $0.id })!)
+            guard let index = selectedCrypto.firstIndex(where: { cryptoList[row].id == $0.id }) else { return }
+            selectedCrypto.remove(at: index)
             sender.isSelected.toggle()
         }
         else if (selectedCrypto.count < 3) {

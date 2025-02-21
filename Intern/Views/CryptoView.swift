@@ -71,7 +71,7 @@ class CryptoView: UIView {
             self.arrowImage.image = UIImage(systemName: "arrow.down")
         } else {
             self.priceDynamic.textColor = .systemGreen
-            self.priceDynamic.text = "+" + self.priceDynamic.text!
+            self.priceDynamic.text = "+" + priceDynamic
             self.arrowImage.tintColor = .systemGreen
             self.arrowImage.image = UIImage(systemName: "arrow.up")
         }
