@@ -151,8 +151,8 @@ class Card: UIView {
         settingsButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         settingsButton.size(CGSize(width: 25.scaleValue(), height: 25.scaleValue()))
         
-        choiceButton.width(170.scaleValue())
-        choiceButton.height(40.scaleValue())
+        choiceButton.width(170)
+        choiceButton.height(40)
         choiceButton.centerXToSuperview()
         choiceButton.bottomToSuperview(offset: -40)
         choiceButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
