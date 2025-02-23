@@ -132,10 +132,9 @@ class Card: UIView {
     
     
     func setupView() {
-        
+
         addSubview(verticalStack)
-        verticalStack.widthToSuperview(multiplier: 0.9)
-        verticalStack.centerInSuperview()
+        verticalStack.edgesToSuperview(insets: TinyEdgeInsets(top: 0, left: 15, bottom: 0, right: 15))
         [upperPlaceholder, sepLine, placeholder].forEach {verticalStack.addArrangedSubview($0)}
 
         [cardText, settingsButton].forEach {upperPlaceholder.addSubview($0)}
@@ -145,13 +144,15 @@ class Card: UIView {
         placeholder.widthToSuperview()
         [defaultImage, choiceButton, errorView, loadingView].forEach {placeholder.addSubview($0)}
         
-        defaultImage.centerInSuperview()
-        defaultImage.widthToSuperview(offset: -30)
+        defaultImage.edgesToSuperview(insets: TinyEdgeInsets(top: 6, left: 15, bottom: 6, right: 15))
         
         settingsButton.edgesToSuperview(excluding: [.bottom, .left], insets: TinyEdgeInsets(top: 6, left: 0, bottom: 0, right: 10))
         settingsButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         
-        choiceButton.edgesToSuperview(insets: TinyEdgeInsets(top: 130, left: 100, bottom: 30, right: 100))
+        choiceButton.width(170)
+        choiceButton.height(40)
+        choiceButton.centerXToSuperview()
+        choiceButton.bottomToSuperview(offset: -40)
         choiceButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         
         cardText.edgesToSuperview(excluding: [.bottom, .right], insets: TinyEdgeInsets(top: 7, left: 20, bottom: 0, right: 0))
@@ -171,6 +172,11 @@ class Card: UIView {
         loadingView.isHidden = false
         [defaultImage, choiceButton, errorView].forEach {$0.isHidden = true}
         loadingView.startAnimating()
+    }
+    
+    func stopLoading() {
+        loadingView.stopAnimating()
+        [defaultImage, choiceButton].forEach {$0.isHidden = false}
     }
     
     // Передача типа нажатой кнопки в обработчик

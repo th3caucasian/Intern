@@ -39,6 +39,7 @@ class WeatherView: UIView {
         return imageView
     }()
     
+
     func fillData(city: String, image: String, weather: String, temperature: String, feelsLike: String, wind: String, windDegree: Int, pressure: String, humidity: String, cloudness: String, visibility: String) {
         cityText.text = city
         weatherText.text = weather

@@ -32,5 +32,4 @@ class ViewBuilder {
         label.text = text
         return label
     }
-    
 }

@@ -37,41 +37,14 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray5
-        setupNavigationBar()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Править", style: .plain, target: self, action: #selector(buttonEditPressed))
+        title = "Главный экран"
         setupStack()
         loadSavedInfo()
         activateButtonsHandler()
         startTimer()
     }
-    
-    private func setupNavigationBar() {
-        self.title = "Главный экран"
-        if let navigationBar = navigationController?.navigationBar {
-            if #available(iOS 13.0, *) {
-                let appearance = UINavigationBarAppearance()
-                appearance.configureWithOpaqueBackground()
-                appearance.backgroundColor = .lightBlue
-                appearance.titleTextAttributes = [
-                    .font: UIFont.systemFont(ofSize: 22, weight: .semibold),
-                    .foregroundColor: UIColor.white
-                ]
-                navigationBar.scrollEdgeAppearance = appearance
-                navigationBar.standardAppearance = appearance
-                navigationBar.compactAppearance = appearance
-                navigationBar.tintColor = .white
-            }
-            else {
-                navigationBar.tintColor = .white
-                navigationBar.backgroundColor = .lightBlue
-                navigationBar.titleTextAttributes = [
-                    .font: UIFont.systemFont(ofSize: 22, weight: .semibold),
-                    .foregroundColor: UIColor.white
-                ]
-            }
-        }
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Править", style: .plain, target: self, action: #selector(buttonEditPressed))
-    }
-    
+
     
     @objc func buttonEditPressed() {
         let settings = SettingsController()
@@ -250,6 +223,7 @@ extension MainViewController {
     private func reloadWeatherPressed() {
         guard let encodedWeather = UserDefaults.standard.data(forKey: "weather") else {
             print("Значение weather не было найдено в UserDefaults")
+            weatherCard.stopLoading()
             return
         }
         guard let weather = try? JSONDecoder().decode(WeatherModel.self, from: encodedWeather) else {
@@ -289,6 +263,9 @@ extension MainViewController {
     @objc private func reloadCryptoPressed() {
         guard let encodedCrypto = UserDefaults.standard.data(forKey: "cryptoList") else {
             print("Значение cryptoList не было найдено в UserDefaults")
+            cryptoCard.stopLoading()
+            cryptoTimer?.invalidate()
+            cryptoTimer = nil
             return
         }
         guard let cryptoList = try? JSONDecoder().decode([Crypto].self, from: encodedCrypto) else {
