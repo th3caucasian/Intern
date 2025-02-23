@@ -8,6 +8,7 @@
 import UIKit
 import TinyConstraints
 
+// rawValue каждого кейса - ключ к Localizable файлу
 enum CardType: String, Codable {
     case unknown = ""
     case city = "city_card_title"

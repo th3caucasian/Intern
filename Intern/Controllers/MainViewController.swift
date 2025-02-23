@@ -90,7 +90,7 @@ extension MainViewController {
                 cryptoCard.removeFromSuperview()
                 cardStack.insertArrangedSubview(cryptoCard, at: i)
             default:
-                fatalError("Неверный элемент в массиве-параметре метода")
+                print("Неверный элемент в массиве-параметре метода")
             }
         }
     }
@@ -168,7 +168,7 @@ extension MainViewController: InfoReceiverDelegate {
                 }
             }
         default:
-            fatalError("lastDelegateUser не был инициализировн")
+            print("lastDelegateUser не был инициализировн")
         }
     }
 }

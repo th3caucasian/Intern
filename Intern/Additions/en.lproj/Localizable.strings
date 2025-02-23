@@ -21,6 +21,8 @@
 "network_error" = "Network error";
 "network_error_weather_message" = "Failed to retrieve weather data. You may be offline.";
 "network_error_crypto_message" = "Failed to retrieve data for the selected cryptocurrency. You may be offline.";
+"parcing_error_crypto" = "Cryptocurrency parsing error";
+"parcing_error_crypto_message" = "The API request limit may have been exceeded. Please try loading the cryptocurrency list later.";
 "crypto_card_error" = "An error occurred while loading the saved cryptocurrency";
 "weather_card_error" = "An error occurred while loading the weather";
 "feels_like_text" = "Feels like";

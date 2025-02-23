@@ -41,9 +41,9 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
             case .failure(let apiError):
                 switch apiError {
                 case .parcingFailure:
-                    self?.showAlert(title: "Ошибка парсинга криптовалюты", message: "Вероятно превышено количество запросов к API. Попробуйте загрузить список криптовалюты позже.")
+                    self?.showAlert(title: ^"parcing_error_crypto", message: ^"parcing_error_crypto_message")
                 case .networkError:
-                    self?.showAlert(title: "Ошибка сети", message: "Не получилось получить данные о списке криптовалюты. Вероятно у вас не работает интернет.")
+                    self?.showAlert(title: ^"network_error", message: ^"network_error_crypto_message")
                 }
             }
         }

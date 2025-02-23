@@ -17,7 +17,7 @@ extension UIViewController {
 
 extension Int {
     func scaleValue() -> CGFloat {
-        let baseScale: CGFloat = 402 * 874
+        let baseScale: CGFloat = 402 * 874  // ширина и высота iphone 16 pro - относительно него все считается
         let area = UIScreen.main.bounds.width * UIScreen.main.bounds.height
         let scale = area / baseScale
         let scaledValue = CGFloat(self) * scale
