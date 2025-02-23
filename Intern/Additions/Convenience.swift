@@ -14,3 +14,19 @@ extension UIViewController {
         self.present(alert, animated: true)
     }
 }
+
+extension Int {
+    func scaleValue() -> CGFloat {
+        let baseScale: CGFloat = 402 * 874
+        let area = UIScreen.main.bounds.width * UIScreen.main.bounds.height
+        let scale = area / baseScale
+        let scaledValue = CGFloat(self) * scale
+        return scaledValue
+    }
+}
+
+prefix operator ^
+prefix func ^ (string: String) -> String {
+    return NSLocalizedString(string, comment: "")
+}
+

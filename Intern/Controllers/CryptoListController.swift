@@ -55,7 +55,7 @@ class CryptoListController: ListViewController, UINavigationControllerDelegate {
                 }
             }
         }
-        title = "Выбор криптовалюты"
+        title = ^"crypto_list_title"
     }
     
     override func updateSearchResults(for searchController: UISearchController) {

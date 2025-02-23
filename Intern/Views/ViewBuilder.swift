@@ -14,22 +14,26 @@ class ViewBuilder {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = font
         label.text = text
+        label.adjustsFontForContentSizeCategory = true
         return label
     }
     
     static func createTextLabel(text: String) -> UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 14, weight: .light)
+        label.font = .systemFont(ofSize: 14.scaleValue(), weight: .light)
         label.text = text
+        label.adjustsFontForContentSizeCategory = true
         return label
     }
     
     static func createValueLabel(text: String) -> UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.font = .systemFont(ofSize: 14.scaleValue(), weight: .bold)
         label.text = text
+        label.adjustsFontForContentSizeCategory = true
         return label
     }
+    
 }

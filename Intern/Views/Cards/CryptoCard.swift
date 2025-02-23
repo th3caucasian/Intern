@@ -22,9 +22,9 @@ class CryptoCard: Card {
     
     override func setupView() {
         super.setupView()
-        cardText.text = "Курс криптовалют"
+        cardText.text = ^"crypto_card_title"
         defaultImage.image = UIImage(named: "crypto_bckgrnd")
-        errorView.setTitle("При загрузке произошла ошибка", for: .normal)
+        errorView.setTitle(^"crypto_card_error", for: .normal)
         cardType = .crypto
         startLoading()
     }

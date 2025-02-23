@@ -54,7 +54,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
         view.addSubview(wrapperView)
         wrapperView.height(165)
         wrapperView.edgesToSuperview(excluding: .bottom, insets: TinyEdgeInsets(top: 30, left: 20, bottom: 490, right: 20), usingSafeArea: true)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Готово", style: .plain, target: self, action: #selector(buttonSavePressed))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: ^"done_order_button", style: .plain, target: self, action: #selector(buttonSavePressed))
     }
 
     
@@ -73,7 +73,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = cardList[indexPath.row].rawValue
+        cell.textLabel?.text = ^cardList[indexPath.row].rawValue
         return cell
     }
     

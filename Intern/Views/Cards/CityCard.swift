@@ -22,7 +22,7 @@ class CityCard: Card {
     
     override func setupView() {
         super.setupView()
-        cardText.text = "Город"
+        cardText.text = ^"city_card_title"
         defaultImage.image = UIImage(named: "map_bckgrnd")
         cardType = .city
     }

@@ -37,8 +37,8 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray5
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Править", style: .plain, target: self, action: #selector(buttonEditPressed))
-        title = "Главный экран"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: ^"edit_order_button", style: .plain, target: self, action: #selector(buttonEditPressed))
+        title = ^"main_screen_title"
         setupStack()
         loadSavedInfo()
         activateButtonsHandler()
@@ -160,9 +160,9 @@ extension MainViewController: InfoReceiverDelegate {
                 case .failure(let apiError):
                     switch apiError {
                     case .parcingFailure:
-                        self?.showAlert(title: "Ошибка парсинга погоды", message: "Попробуйте обновить погоду позже")
+                        self?.showAlert(title: ^"parcing_error_weather", message: ^"error_parcing_weather_message")
                     case .networkError:
-                        self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о погоде. Вероятно у вас не работает интернет.")
+                        self?.showAlert(title: ^"network_error", message: ^"network_error_weather_message")
                     }
                     self?.weatherCard.setWeather(weatherModel: nil)
                 }
@@ -243,9 +243,9 @@ extension MainViewController {
             case .failure(let apiError):
                 switch apiError {
                 case .parcingFailure:
-                    self?.showAlert(title: "Ошибка парсинга погоды", message: "Попробуйте обновить погоду позже")
+                    self?.showAlert(title: ^"error_parcing_weather", message: ^"error_parcing_weather_message")
                 case .networkError:
-                    self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о погоде. Вероятно у вас не работает интернет.")
+                    self?.showAlert(title: ^"network_error", message: ^"network_error_weather_message")
                 }
                 self?.weatherCard.setWeather(weatherModel: nil)
             }
@@ -255,7 +255,7 @@ extension MainViewController {
     private func selectCryptoPressed() {
         let cryptoList = CryptoListController()
         cryptoList.transmissionDelegate = self
-        self.navigationController?.pushViewController(cryptoList, animated: true)
+        navigationController?.pushViewController(cryptoList, animated: true)
         cryptoTimer?.invalidate()
         cryptoTimer = nil
     }
@@ -299,7 +299,7 @@ extension MainViewController {
                 case .parcingFailure:
                     break
                 case .networkError:
-                    self?.showAlert(title: "Ошибка сети", message: "Не удалось получить данные о выбранной криптовалюте. Вероятно у вас не работает интернет.")
+                    self?.showAlert(title: ^"network_error", message: ^"network_error_weather_message")
                     self?.cryptoTimer?.invalidate()
                     self?.cryptoTimer = nil
                     self?.cryptoCard.setCrypto(cryptos: nil)

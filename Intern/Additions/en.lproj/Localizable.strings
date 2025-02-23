@@ -1,0 +1,35 @@
+/* 
+  Localizable.strings
+  Intern
+
+  Created by Алан Эркенов on 23.02.2025.
+  
+*/
+
+"main_screen_title" = "Main screen";
+"cities_list_title" = "City choice";
+"crypto_list_title" = "Crypto choice";
+"city_card_title" = "City";
+"weather_card_title" = "Weather";
+"crypto_card_title" = "Cryptocurrency";
+"choice_button_text" = "Choice";
+"done_order_button" = "Done";
+"search_text_placeholder" = "Search";
+"edit_order_button" = "Edit";
+"parcing_error_weather" = "Weather parsing error";
+"error_parcing_weather_message" = "Please try updating the weather later";
+"network_error" = "Network error";
+"network_error_weather_message" = "Failed to retrieve weather data. You may be offline.";
+"network_error_crypto_message" = "Failed to retrieve data for the selected cryptocurrency. You may be offline.";
+"crypto_card_error" = "An error occurred while loading the saved cryptocurrency";
+"weather_card_error" = "An error occurred while loading the weather";
+"feels_like_text" = "Feels like";
+"wind_text" = "Wind";
+"meters_per_second_text" = "m/s";
+"pressure_text" = "Pressure";
+"humidity_text" = "Humidity";
+"percentage_text" = "%";
+"cloudness_text" = "Cloudiness";
+"visibility_text" = "Visibility";
+"km_text" = "km";
+"mmRtSt_text" = "mmHg";

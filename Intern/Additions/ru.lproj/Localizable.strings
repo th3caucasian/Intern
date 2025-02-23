@@ -1,0 +1,36 @@
+/* 
+  Localizable.strings
+  Intern
+
+  Created by Алан Эркенов on 23.02.2025.
+  
+*/
+
+"main_screen_title" = "Главный экран";
+"cities_list_title" = "Выбор города";
+"crypto_list_title" = "Выбор криптовалюты";
+"city_card_title" = "Город";
+"weather_card_title" = "Погода";
+"crypto_card_title" = "Курс криптовалют";
+"choice_button_text" = "Выбрать";
+"done_order_button" = "Готово";
+"search_text_placeholder" = "Поиск";
+"edit_order_button" = "Править";
+"parcing_error_weather" = "Ошибка парсинга погоды";
+"error_parcing_weather_message" = "Попробуйте обновить погоду позже";
+"network_error" = "Ошибка сети";
+"network_error_weather_message" = "Не удалось получить данные о погоде. Вероятно у вас не работает интернет.";
+"network_error_crypto_message" = "Не удалось получить данные о выбранной криптовалюте. Вероятно у вас не работает интернет.";
+"crypto_card_error" = "При загрузке сохраненной криптовалюты произошла ошибка";
+"weather_card_error" = "При загрузке погоды произошла ошибка";
+"feels_like_text" = "Ощущается как";
+"wind_text" = "Ветер";
+"meters_per_second_text" = "м/с";
+"pressure_text" = "Давление";
+"humidity_text" = "Влажность";
+"percentage_text" = "%";
+"cloudness_text" = "Облачность";
+"visibility_text" = "Видимость";
+"km_text" = "км";
+"mmRtSt_text" = "м.р.ст";
+

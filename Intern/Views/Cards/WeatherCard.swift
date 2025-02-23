@@ -14,10 +14,10 @@ class WeatherCard: Card {
     
     override func setupView() {
         super.setupView()
-        cardText.text = "Погода"
+        cardText.text = ^"weather_card_title"
         defaultImage.image = UIImage(named: "weather_bckgrnd")
         weatherView.setupView()
-        errorView.setTitle("При загрузке погоды произошла ошибка", for: .normal)
+        errorView.setTitle(^"weather_card_error", for: .normal)
         cardType = .weather
         startLoading()
     }

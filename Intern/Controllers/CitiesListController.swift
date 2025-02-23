@@ -23,7 +23,7 @@ class CitiesListController: ListViewController {
     override func setupList() {
         citiesList = JSONReader().loadCitiesFromFile(fileName: "cities")
         filteredList = citiesList
-        title = "Выбор города"
+        title = ^"cities_list_title"
     }
     
     override func updateSearchResults(for searchController: UISearchController) {

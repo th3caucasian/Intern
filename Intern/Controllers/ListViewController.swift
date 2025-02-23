@@ -39,7 +39,7 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(toggleSearch))
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
+        searchController.searchBar.placeholder = ^"search_text_placeholder"
         searchController.searchBar.becomeFirstResponder()
         searchController.searchBar.backgroundColor = .white
         navigationItem.hidesSearchBarWhenScrolling = false

@@ -12,7 +12,7 @@ class CryptoView: UIView {
     
     private let cryptoName: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 17.scaleValue(), weight: .medium)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .center
@@ -29,7 +29,7 @@ class CryptoView: UIView {
     
     private let cryptoPrice: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 13.scaleValue(), weight: .regular)
         label.contentMode = .scaleAspectFit
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
@@ -38,7 +38,7 @@ class CryptoView: UIView {
     
     private var priceDynamic: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 13.scaleValue(), weight: .regular)
         label.contentMode = .scaleAspectFit
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
@@ -93,20 +93,20 @@ class CryptoView: UIView {
         
         cryptoName.widthToSuperview(multiplier: 0.9)
         cryptoName.centerXToSuperview()
-        cryptoName.topToSuperview(offset: 20)
+        cryptoName.topToSuperview(offset: 20.scaleValue())
         
-        cryptoImage.topToBottom(of: cryptoName, offset: 10)
+        cryptoImage.topToBottom(of: cryptoName, offset: 10.scaleValue())
         cryptoImage.widthToSuperview(multiplier: 0.9)
         cryptoImage.centerXToSuperview()
-        cryptoImage.height(70)
+        cryptoImage.height(70.scaleValue())
         
         cryptoPrice.widthToSuperview(multiplier: 0.9)
         cryptoPrice.centerXToSuperview()
-        cryptoPrice.topToBottom(of: cryptoImage, offset: 10)
+        cryptoPrice.topToBottom(of: cryptoImage, offset: 10.scaleValue())
         
         arrowImage.height(15)
         
-        horizontalStack.topToBottom(of: cryptoPrice, offset: 4)
+        horizontalStack.topToBottom(of: cryptoPrice, offset: 4.scaleValue())
         horizontalStack.centerXToSuperview()
 
     }

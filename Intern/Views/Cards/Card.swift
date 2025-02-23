@@ -10,9 +10,9 @@ import TinyConstraints
 
 enum CardType: String, Codable {
     case unknown = ""
-    case city = "Город"
-    case weather = "Погода"
-    case crypto = "Курс криптовалют"
+    case city = "city_card_title"
+    case weather = "weather_card_title"
+    case crypto = "crypto_card_title"
 }
 
 enum Action {
@@ -97,7 +97,7 @@ class Card: UIView {
     let cardText: UILabel = {
         let label = UILabel()
         label.text = "Template"
-        label.font = UIFont.systemFont(ofSize: 17)
+        label.font = UIFont.systemFont(ofSize: 17.scaleValue())
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -148,9 +148,10 @@ class Card: UIView {
         
         settingsButton.edgesToSuperview(excluding: [.bottom, .left], insets: TinyEdgeInsets(top: 6, left: 0, bottom: 0, right: 10))
         settingsButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+        settingsButton.size(CGSize(width: 25.scaleValue(), height: 25.scaleValue()))
         
-        choiceButton.width(170)
-        choiceButton.height(40)
+        choiceButton.width(170.scaleValue())
+        choiceButton.height(40.scaleValue())
         choiceButton.centerXToSuperview()
         choiceButton.bottomToSuperview(offset: -40)
         choiceButton.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
